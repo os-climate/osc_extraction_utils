@@ -1,8 +1,8 @@
 ==================
-osc-data-extractor
+osc-extraction-utils
 ==================
 
-This is the documentation of **osc-data-extractor**.
+This is the documentation of **osc-extraction-utils**.
 
 .. note::
 
