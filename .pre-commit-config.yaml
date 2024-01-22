@@ -51,6 +51,7 @@ repos:
       - id: mixed-line-ending
         args: ["--fix=lf"]
       - id: name-tests-test
+        args: ["--pytest-test-first"]
       # Do not allow direct push to main/master branches
       - id: no-commit-to-branch
       # - id: pretty-format-json
@@ -58,12 +59,12 @@ repos:
       - id: trailing-whitespace
 
   # Autoformat: YAML, JSON, Markdown, etc.
-  - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v4.0.0-alpha.8
+  - repo: https://github.com/prettier/pre-commit
+    rev: v2.2.0
     hooks:
       - id: prettier
         args:
-          ['--ignore-unknown', '--no-error-on-unmatched-pattern', '!chart/**']
+          ['--ignore-unknown']
 
   # Lint: Markdown
   - repo: https://github.com/igorshubovych/markdownlint-cli
@@ -97,7 +98,7 @@ repos:
     rev: 2.1.1
     hooks:
       - id: bashate
-        args: ["--ignore=E006"]
+        args: ["--ignore=E006,E011"]
 
   - repo: https://github.com/shellcheck-py/shellcheck-py
     rev: v0.9.0.6
@@ -121,6 +122,7 @@ repos:
     rev: 5.13.2
     hooks:
       - id: isort
+        args: ["--profile", "black"]
 
   - repo: https://github.com/adrienverge/yamllint.git
     rev: v1.33.0
@@ -159,4 +161,4 @@ repos:
       - id: mypy
         verbose: true
         args: [--show-error-codes]
-        additional_dependencies: ["types-requests"]
+        additional_dependencies: ["pytest", "types-requests"]

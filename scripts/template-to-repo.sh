@@ -1,6 +1,12 @@
 #!/bin/bash
 
-# set -x
+# set -x
+
+THIS_SCRIPT=$(basename "$0")
+echo "This script: $SELF"
+
+TEMPLATE_NAME=osc-python-template
+ALT_TEMPLATE_NAME="${TEMPLATE_NAME//-/_}"
 
 ### Shared functions
 
@@ -48,6 +54,14 @@ file_content_substitution() {
     else
         FILENAME="$1"
     fi
+
+    # Do not modify self!
+    BASE_FILENAME=$(basename "$FILENAME")
+    if [ "$BASE_FILENAME" = "$THIS_SCRIPT" ]; then
+        echo "Skipping self: $THIS_SCRIPT"
+        return
+    fi
+
     COUNT=0
     if (grep "$TEMPLATE_NAME" "$FILENAME" > /dev/null 2>&1); then
         MATCHES=$(grep -c "$TEMPLATE_NAME" "$FILENAME")
@@ -79,9 +93,6 @@ file_content_substitution() {
 }
 
 ### Main script entry point
-
-TEMPLATE_NAME=osc-extraction-utils
-ALT_TEMPLATE_NAME="${TEMPLATE_NAME//-/_}"
 
 if ! (git rev-parse --show-toplevel > /dev/null); then
     echo "Error: this folder is not part of a GIT repository"; exit 1
