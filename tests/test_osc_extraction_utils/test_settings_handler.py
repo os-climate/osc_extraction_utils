@@ -16,7 +16,7 @@ def test_read_settings_files(settings_handler: SettingsHandler):
     path_settings_main = path_root / 'data' / 'TEST' / 'settings.yaml'
     path_settings_s3 = path_root / 'data' / 's3_settings.yaml'
     
-    with (patch('utils.settings_handler.yaml'),
+    with (patch('osc_extraction_utils.settings_handler.yaml'),
           patch('builtins.open') as mocked_open):
         
         settings_handler.read_settings()

@@ -34,9 +34,9 @@ def prerequisites_generate_text(path_folder_temporary: Path, project_paths: Proj
         path_current_file.touch()
         write_to_file(path_current_file, f'That is a test {i}', 'HEADER')
         
-    with (patch('train_on_pdf.folder_relevance', str(path_folder_relevance)),
-          patch('train_on_pdf.folder_text_3434', str(path_folder_text_3434)),
-          patch('train_on_pdf.os.getenv', lambda *args: args[0])):
+    with (patch.object(project_paths, 'path_folder_relevance', Path(path_folder_relevance)),
+          patch.object(project_paths, 'path_folder_text_3434', Path(path_folder_text_3434)),
+          patch('osc_extraction_utils.merger.os.getenv', lambda *args: args[0])):
         yield
         
     # cleanup
@@ -71,7 +71,7 @@ def test_generate_text_with_s3(path_folder_temporary: Path, project_paths: Path)
         }
     }
     
-    with (patch('utils.merger.S3Communication', Mock(spec=S3Communication)) as mocked_s3):
+    with (patch('osc_extraction_utils.merger.S3Communication', Mock(spec=S3Communication)) as mocked_s3):
         generate_text_3434(project_name, True, S3Settings(**mocked_s3_settings), project_paths=project_paths)
         
     # check for calls
@@ -185,7 +185,7 @@ def test_generate_text_not_successful_exception(path_folder_temporary: Path, pro
     [file.unlink() for file in path_folder_relevance.glob("*") if file.is_file()]
     
     # patch glob.iglob to force an exception...
-    with patch('train_on_pdf.glob.iglob', side_effect=lambda *args: [None]):
+    with patch('osc_extraction_utils.merger.glob.iglob', side_effect=lambda *args: [None]):
         return_value = generate_text_3434(project_name, s3_usage, project_settings, project_paths=project_paths)
         
         assert return_value == False

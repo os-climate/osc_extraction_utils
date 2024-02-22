@@ -7,7 +7,7 @@ from osc_extraction_utils.settings import Settings, MainSettings
 
 @pytest.fixture
 def path_folder_config_path() -> Path:
-    return Path(__file__).parents[3]
+    return Path(__file__).parents[2]
 
 
 @pytest.fixture

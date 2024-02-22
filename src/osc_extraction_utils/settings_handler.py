@@ -14,12 +14,12 @@ class SettingsHandler():
         self.s3_settings: S3Settings = s3_settings
     
     def read_settings(self, 
-                      path_main_settings=Path(__file__).parent.parent.resolve() / 'data' / 'TEST' / 'settings.yaml',
-                      path_s3_settings=Path(__file__).parent.parent.resolve() / 'data' / 's3_settings.yaml'):
+                      path_main_settings=Path(__file__).parents[2].resolve() / 'data' / 'TEST' / 'settings.yaml',
+                      path_s3_settings=Path(__file__).parents[2].resolve() / 'data' / 's3_settings.yaml'):
 
         try:
             with (open(str(path_main_settings)) as file_main_settings,
-                  open(str(path_s3_settings)) as file_settings_3):
+                  open(str(path_s3_settings)) as file_s3_settings):
                 
                 self.main_settings = yaml.safe_load(file_main_settings)
                 self.s3_settings = yaml.safe_load(file_s3_settings)

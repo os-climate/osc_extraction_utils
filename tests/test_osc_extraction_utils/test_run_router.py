@@ -41,7 +41,7 @@ def server(prerequisites_generate_text) -> requests_mock.mocker.Mocker:
     server_address_inference = f'http://{inference_ip}:{inference_port}'
     
     with (requests_mock.Mocker() as mocked_server,
-          patch('train_on_pdf.json')):
+          patch('osc_extraction_utils.router.json')):
         mocked_server.get(f'{server_address_extraction}/liveness', status_code=200)
         mocked_server.get(f'{server_address_extraction}/extract', status_code=200)
         mocked_server.get(f'{server_address_extraction}/curate', status_code=200)
@@ -193,7 +193,7 @@ def test_run_router_kpi_training(router: Router,
     else:
         mocked_generate_text.side_effect = Exception()
         
-    with (patch('utils.router.generate_text_3434', mocked_generate_text),
+    with (patch('osc_extraction_utils.router.generate_text_3434', mocked_generate_text),
           patch.object(main_settings, 'train_kpi', Mock(train=train_kpi))):
         server.get(server_address_node_infer_relevance, status_code=status_code_infer_relevance)
         server.get(server_address_node_train_kpi, status_code=status_code_train_kpi)
@@ -215,7 +215,7 @@ def test_run_router_successful_run(router: Router,
                                    server: requests_mock.mocker.Mocker,
                                    infer_relevance: bool,
                                    train_kpi: bool):
-    with patch('utils.merger.generate_text_3434', Mock()):
+    with patch('osc_extraction_utils.merger.generate_text_3434', Mock()):
         router.run_router()
 
     assert router.return_value == True
