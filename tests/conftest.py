@@ -4,8 +4,6 @@ import sys
 from typing import Generator
 
 import pytest
-from utils_test import project_tests_root
-
 from osc_extraction_utils.paths import ProjectPaths
 from osc_extraction_utils.settings import (
     MainSettings,
@@ -14,6 +12,7 @@ from osc_extraction_utils.settings import (
     get_main_settings,
     get_s3_settings,
 )
+from utils_test import project_tests_root
 
 # add test_on_pdf.py to the PATH
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
