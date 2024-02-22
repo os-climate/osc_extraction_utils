@@ -4,12 +4,14 @@ from unittest.mock import Mock, patch
 import pytest
 import requests_mock
 from _pytest.capture import CaptureFixture
-from test_generate_text import prerequisites_generate_text
 
 from osc_extraction_utils.paths import ProjectPaths
 from osc_extraction_utils.router import Router
 from osc_extraction_utils.s3_communication import S3Communication
 from osc_extraction_utils.settings import MainSettings, S3Settings
+from tests.test_osc_extraction_utils.test_generate_text import (
+    prerequisites_generate_text,
+)
 
 
 @pytest.fixture

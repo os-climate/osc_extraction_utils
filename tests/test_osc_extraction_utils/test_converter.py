@@ -37,7 +37,7 @@ def test_convert_single_file_to_csv(converter):
     mocked_read_excel: Mock = Mock()
     path_destination_folder: Path = Path("destination_folder")
 
-    with patch("osc_extraction_utils.core_utils.pd.read_excel", mocked_read_excel):
+    with patch("osc_extraction_utils.converter.pd.read_excel", mocked_read_excel):
         converter._convert_single_file_to_csv(Path("file.xlsx"))
 
     mocked_read_excel.assert_called_once_with(Path("file.xlsx"), engine="openpyxl")
