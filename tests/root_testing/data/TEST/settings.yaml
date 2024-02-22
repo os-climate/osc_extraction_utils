@@ -19,7 +19,7 @@ data_export:
   db_post_command: ''
 # Next follow the parameters for the NLP Machine Learning Model
 # All the input parameters for pdf text extraction stage
-extraction: 
+extraction:
   min_paragraph_length: 20
   seed: 42
   annotation_folder:
@@ -27,7 +27,7 @@ extraction:
   use_extractions: true
   store_extractions: true
 # All the input parameters for curation stage
-curation: 
+curation:
   retrieve_paragraph: false
   neg_pos_ratio: 1
   columns_to_read: ["company", "source_file", "source_page", "kpi_id", "year", "answer", "data_type", "relevant_paragraphs"]
@@ -36,7 +36,7 @@ curation:
   min_length_neg_sample: 50
   seed: 41
 # All the input parameters for the relevance training stage
-train_relevance: 
+train_relevance:
   tokenizer_base_model: roberta-base
   base_model: roberta-base
   input_model_name:
@@ -69,7 +69,7 @@ train_relevance:
     xval_folds: 5
     max_processes: 128
 # All the input parameters for the application of inferance on relevance data in the training stage
-infer_relevance: 
+infer_relevance:
   skip_processed_files: true
   batch_size: 16
   gpu: true
@@ -80,7 +80,7 @@ infer_relevance:
   return_class_probs: false
 # All the input parameters for the kpi training stage
 train_kpi:
-  input_model_name: 
+  input_model_name:
   output_model_name: TEST_1
   base_model: a-ware/roberta-large-squadv2
   train: true

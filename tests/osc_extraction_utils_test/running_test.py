@@ -1,9 +1,10 @@
 from pathlib import Path
-from osc_extraction_utils.training_monitor import TrainingMonitor
-import pytest
-from unittest.mock import patch, Mock
-from osc_extraction_utils.paths import path_file_running
+from unittest.mock import Mock, patch
 
+import pytest
+
+from osc_extraction_utils.paths import path_file_running
+from osc_extraction_utils.training_monitor import TrainingMonitor
 
 # @pytest.fixture
 # def prerequisite_running(path_folder_root_testing: Path):
@@ -14,13 +15,14 @@ from osc_extraction_utils.paths import path_file_running
 #     """
 #     # path_file_running = path_folder_root_testing / 'data' / 'running'
 #     # # mock the path to the running file
-#     # with patch('train_on_pdf.path_file_running', 
+#     # with patch('train_on_pdf.path_file_running',
 #     #            str(path_file_running)):
 #     yield
 
 #     # cleanup
 #     path_file_running.unlink(missing_ok=True)
-    
+
+
 @pytest.fixture
 def training_monitor() -> TrainingMonitor:
     """The fixture returns a TrainingMonitor object for testing
@@ -32,10 +34,9 @@ def training_monitor() -> TrainingMonitor:
     yield _train_monitor
     # clean up
     _train_monitor._delete_path_file_running()
-        
 
-def test_set_running(path_folder_root_testing: Path,
-                     training_monitor: TrainingMonitor):
+
+def test_set_running(path_folder_root_testing: Path, training_monitor: TrainingMonitor):
     """Tests the set_running function creating a running file
 
     :param prerequisite_running: Fixture for prerequisite of running funcions
@@ -46,14 +47,13 @@ def test_set_running(path_folder_root_testing: Path,
     # set path to running file and do a cleanup
     # path_file_running = path_folder_root_testing / 'data' / 'running'
     path_file_running.unlink(missing_ok=True)
-    
+
     # perform set_running and assert that running file exists
     training_monitor.set_running()
     assert path_file_running.exists()
 
 
-def test_checking_onging_run(path_folder_root_testing: Path,
-                             training_monitor: TrainingMonitor):
+def test_checking_onging_run(path_folder_root_testing: Path, training_monitor: TrainingMonitor):
     """Tests the return value of check_running for ongoing runs
 
     :param prerequisite_running: Fixture for prerequisite of running funcions
@@ -66,8 +66,7 @@ def test_checking_onging_run(path_folder_root_testing: Path,
     assert training_monitor.check_running() == True
 
 
-def test_checking_finished_run(path_folder_root_testing: Path,
-                               training_monitor: TrainingMonitor):
+def test_checking_finished_run(path_folder_root_testing: Path, training_monitor: TrainingMonitor):
     """Tests the return value of check_running for finished runs
 
     :param prerequisite_running: Fixture for prerequisite of running funcions
@@ -76,12 +75,11 @@ def test_checking_finished_run(path_folder_root_testing: Path,
     :type path_folder_root_testing: Path
     """
     # path_file_running = path_folder_root_testing / 'data' / 'running'
-    path_file_running.unlink(missing_ok = True)
+    path_file_running.unlink(missing_ok=True)
     assert training_monitor.check_running() == False
-       
 
-def test_clear_running(path_folder_root_testing: Path,
-                       training_monitor: TrainingMonitor):
+
+def test_clear_running(path_folder_root_testing: Path, training_monitor: TrainingMonitor):
     """Tests for clearing running file
 
     :param prerequisite_running: Fixture for prerequisite of running funcions
