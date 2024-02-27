@@ -2,7 +2,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 import pytest
-from utils_tests import create_multiple_xlsx_files, create_single_xlsx_file
+from conftest import create_multiple_xlsx_files, create_single_xlsx_file
 
 from osc_extraction_utils.merger import Merger
 from osc_extraction_utils.paths import ProjectPaths
@@ -22,7 +22,11 @@ def merger(main_settings: MainSettings, s3_settings: S3Settings, project_paths: 
 
 @pytest.mark.parametrize("s3_usage", [True, False])
 def test_setup_s3_usage(merger: Merger, s3_usage: bool):
-    with patch.object(merger.main_settings.general, "s3_usage", s3_usage):
+    with (
+        patch.object(merger.main_settings.general, "s3_usage", s3_usage),
+        patch.object(merger.s3_settings.main_bucket, "s3_endpoint", "https://0.0.0.0"),
+        patch.object(merger.s3_settings.interim_bucket, "s3_endpoint", "https://0.0.0.0"),
+    ):
         merger._setup_s3_usage()
 
     if s3_usage:

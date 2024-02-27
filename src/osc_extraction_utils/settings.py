@@ -187,7 +187,7 @@ class MainBucketSettings(BaseSettings):
 
 
 class InterimBucketSettings(BaseSettings):
-    s3_endpoint: str = Field(default="")
+    s3_endpoint: str = Field(default="https://")
     s3_access_key: str = Field(default="")
     s3_secret_key: str = Field(default="")
     s3_bucket_name: str = Field(default="")

@@ -1,7 +1,7 @@
 from unittest.mock import patch
 
 import pytest
-from utils_tests import project_tests_root
+from conftest import project_tests_root
 
 from osc_extraction_utils.settings_handler import SettingsHandler
 

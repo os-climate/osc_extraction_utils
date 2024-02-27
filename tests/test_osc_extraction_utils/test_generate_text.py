@@ -1,54 +1,14 @@
-import shutil
 from pathlib import Path
-from typing import Generator
 from unittest.mock import Mock, patch
 
-import pytest
 from _pytest.capture import CaptureFixture
-from utils_tests import write_to_file
 
 from osc_extraction_utils.merger import generate_text_3434
-from osc_extraction_utils.paths import ProjectPaths
 from osc_extraction_utils.s3_communication import S3Communication
 from osc_extraction_utils.settings import S3Settings
 
 
-@pytest.fixture(autouse=True)
-def prerequisites_generate_text(
-    path_folder_temporary: Path, project_paths: ProjectPaths
-) -> Generator[None, None, None]:
-    """Defines a fixture for mocking all required paths and creating required temporary folders
-
-    :param path_folder_temporary: Requesting the path_folder_temporary fixture
-    :type path_folder_temporary: Path
-    :rtype: None
-    """
-    path_folder_relevance = path_folder_temporary / "relevance"
-    path_folder_text_3434 = path_folder_temporary / "folder_test_3434"
-    path_folder_relevance.mkdir(parents=True)
-    path_folder_text_3434.mkdir(parents=True)
-    project_paths.path_folder_relevance = path_folder_temporary / "relevance"
-    project_paths.path_folder_text_3434 = path_folder_text_3434
-
-    # create multiple files in the folder_relevance with the same header
-    for i in range(5):
-        path_current_file = path_folder_relevance / f"{i}_test.csv"
-        path_current_file.touch()
-        write_to_file(path_current_file, f"That is a test {i}", "HEADER")
-
-    with (
-        patch.object(project_paths, "path_folder_relevance", Path(path_folder_relevance)),
-        patch.object(project_paths, "path_folder_text_3434", Path(path_folder_text_3434)),
-        patch("osc_extraction_utils.merger.os.getenv", lambda *args: args[0]),
-    ):
-        yield
-
-    # cleanup
-    for path in path_folder_temporary.glob("*"):
-        shutil.rmtree(path)
-
-
-def test_generate_text_with_s3(path_folder_temporary: Path, project_paths: Path):
+def test_generate_text_with_s3(prerequisites_generate_text, path_folder_temporary: Path, project_paths: Path):
     """Tests if the s3 connection objects are created and their methods are called
     Requesting prerequisites_generate_text automatically (autouse)
 
@@ -95,7 +55,7 @@ def test_generate_text_with_s3(path_folder_temporary: Path, project_paths: Path)
     assert any([call for call in call_list if "upload_file_to_s3" in call])
 
 
-def test_generate_text_no_s3(path_folder_temporary: Path, project_paths: Path):
+def test_generate_text_no_s3(prerequisites_generate_text, path_folder_temporary: Path, project_paths: Path):
     """Tests if files are taken from the folder relevance,
     then read in and putting the content into the file text_3434.csv. Note that
     the header of text_3434.csv is taken from the first file read in
@@ -131,7 +91,7 @@ def test_generate_text_no_s3(path_folder_temporary: Path, project_paths: Path):
                 assert line_content.rstrip() in strings_expected
 
 
-def test_generate_text_successful(path_folder_temporary: Path, project_paths: Path):
+def test_generate_text_successful(prerequisites_generate_text, path_folder_temporary: Path, project_paths: Path):
     """Tests if the function returns true
     Requesting prerequisites_generate_text automatically (autouse)
 
@@ -147,7 +107,7 @@ def test_generate_text_successful(path_folder_temporary: Path, project_paths: Pa
 
 
 def test_generate_text_not_successful_empty_folder(
-    path_folder_temporary: Path, project_paths: Path, capsys: CaptureFixture[str]
+    prerequisites_generate_text, path_folder_temporary: Path, project_paths: Path, capsys: CaptureFixture[str]
 ):
     """Tests if the function returns false
     Requesting prerequisites_generate_text automatically (autouse)
@@ -175,7 +135,9 @@ def test_generate_text_not_successful_empty_folder(
     assert return_value is False
 
 
-def test_generate_text_not_successful_exception(path_folder_temporary: Path, project_paths: Path):
+def test_generate_text_not_successful_exception(
+    prerequisites_generate_text, path_folder_temporary: Path, project_paths: Path
+):
     """Tests if the function returns false
     Requesting prerequisites_generate_text automatically (autouse)
 

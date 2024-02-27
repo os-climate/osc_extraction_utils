@@ -9,8 +9,6 @@ from osc_extraction_utils.paths import ProjectPaths
 from osc_extraction_utils.router import Router
 from osc_extraction_utils.settings import MainSettings, S3Settings
 
-from tests.test_osc_extraction_utils.test_generate_text import prerequisites_generate_text
-
 
 @pytest.fixture
 def router(main_settings: MainSettings, s3_settings: S3Settings, project_paths: ProjectPaths):
