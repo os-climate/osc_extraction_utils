@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Generator
 
 import pytest
 
@@ -23,7 +24,7 @@ from osc_extraction_utils.training_monitor import TrainingMonitor
 
 
 @pytest.fixture
-def training_monitor() -> TrainingMonitor:
+def training_monitor() -> Generator[TrainingMonitor, None, None]:
     """The fixture returns a TrainingMonitor object for testing
 
     :yield: TrainingMonitor class for monitor training status

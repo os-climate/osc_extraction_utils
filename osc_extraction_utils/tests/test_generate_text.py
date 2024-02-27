@@ -4,11 +4,12 @@ from unittest.mock import Mock, patch
 from _pytest.capture import CaptureFixture
 
 from osc_extraction_utils.merger import generate_text_3434
+from osc_extraction_utils.paths import ProjectPaths
 from osc_extraction_utils.s3_communication import S3Communication
 from osc_extraction_utils.settings import S3Settings
 
 
-def test_generate_text_with_s3(prerequisites_generate_text, path_folder_temporary: Path, project_paths: Path):
+def test_generate_text_with_s3(prerequisites_generate_text, path_folder_temporary: Path, project_paths: ProjectPaths):
     """Tests if the s3 connection objects are created and their methods are called
     Requesting prerequisites_generate_text automatically (autouse)
 
@@ -55,7 +56,9 @@ def test_generate_text_with_s3(prerequisites_generate_text, path_folder_temporar
     assert any([call for call in call_list if "upload_file_to_s3" in call])
 
 
-def test_generate_text_no_s3(prerequisites_generate_text, path_folder_temporary: Path, project_paths: Path):
+def test_generate_text_no_s3(
+    prerequisites_generate_text, path_folder_temporary: Path, project_paths: ProjectPaths, s3_settings: S3Settings
+):
     """Tests if files are taken from the folder relevance,
     then read in and putting the content into the file text_3434.csv. Note that
     the header of text_3434.csv is taken from the first file read in
@@ -68,9 +71,8 @@ def test_generate_text_no_s3(prerequisites_generate_text, path_folder_temporary:
     path_folder_text_3434 = path_folder_temporary / "folder_test_3434"
     project_name = "test"
     s3_usage = False
-    project_settings = None
 
-    generate_text_3434(project_name, s3_usage, project_settings, project_paths=project_paths)
+    generate_text_3434(project_name, s3_usage, s3_settings, project_paths=project_paths)
 
     # ensure that the header and the content form the first file is written to
     # the file text_3434.csv in folder relevance and the the content of the other
@@ -91,7 +93,9 @@ def test_generate_text_no_s3(prerequisites_generate_text, path_folder_temporary:
                 assert line_content.rstrip() in strings_expected
 
 
-def test_generate_text_successful(prerequisites_generate_text, path_folder_temporary: Path, project_paths: Path):
+def test_generate_text_successful(
+    prerequisites_generate_text, path_folder_temporary: Path, project_paths: ProjectPaths, s3_settings: S3Settings
+):
     """Tests if the function returns true
     Requesting prerequisites_generate_text automatically (autouse)
 
@@ -100,14 +104,17 @@ def test_generate_text_successful(prerequisites_generate_text, path_folder_tempo
     """
     project_name = "test"
     s3_usage = False
-    project_settings = None
 
-    return_value = generate_text_3434(project_name, s3_usage, project_settings, project_paths=project_paths)
+    return_value = generate_text_3434(project_name, s3_usage, s3_settings, project_paths=project_paths)
     assert return_value is True
 
 
 def test_generate_text_not_successful_empty_folder(
-    prerequisites_generate_text, path_folder_temporary: Path, project_paths: Path, capsys: CaptureFixture[str]
+    prerequisites_generate_text,
+    path_folder_temporary: Path,
+    project_paths: ProjectPaths,
+    capsys: CaptureFixture[str],
+    s3_settings: S3Settings,
 ):
     """Tests if the function returns false
     Requesting prerequisites_generate_text automatically (autouse)
@@ -119,7 +126,6 @@ def test_generate_text_not_successful_empty_folder(
     """
     project_name = "test"
     s3_usage = False
-    project_settings = None
 
     # clear the relevance folder
     path_folder_relevance = path_folder_temporary / "relevance"
@@ -128,7 +134,7 @@ def test_generate_text_not_successful_empty_folder(
             file.unlink()
 
     # call the function
-    return_value = generate_text_3434(project_name, s3_usage, project_settings, project_paths=project_paths)
+    return_value = generate_text_3434(project_name, s3_usage, s3_settings, project_paths=project_paths)
 
     output_cmd, _ = capsys.readouterr()
     assert "No relevance inference results found." in output_cmd
@@ -136,7 +142,10 @@ def test_generate_text_not_successful_empty_folder(
 
 
 def test_generate_text_not_successful_exception(
-    prerequisites_generate_text, path_folder_temporary: Path, project_paths: Path
+    prerequisites_generate_text,
+    path_folder_temporary: Path,
+    project_paths: ProjectPaths,
+    s3_settings: S3Settings,
 ):
     """Tests if the function returns false
     Requesting prerequisites_generate_text automatically (autouse)
@@ -146,7 +155,6 @@ def test_generate_text_not_successful_exception(
     """
     project_name = "test"
     s3_usage = False
-    project_settings = None
 
     # clear the relevance folder
     path_folder_relevance = path_folder_temporary / "relevance"
@@ -156,6 +164,11 @@ def test_generate_text_not_successful_exception(
 
     # patch glob.iglob to force an exception...
     with patch("osc_extraction_utils.merger.glob.iglob", side_effect=lambda *args: [None]):
-        return_value = generate_text_3434(project_name, s3_usage, project_settings, project_paths=project_paths)
+        return_value = generate_text_3434(
+            project_name=project_name,
+            s3_usage=s3_usage,
+            s3_settings=s3_settings,
+            project_paths=project_paths,
+        )
 
         assert return_value is False

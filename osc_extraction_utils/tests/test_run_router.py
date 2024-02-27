@@ -1,4 +1,5 @@
 import typing
+from pathlib import Path
 from unittest.mock import Mock, patch
 
 import pytest
@@ -220,7 +221,7 @@ def test_run_router_kpi_training(
 
     # force an exception of generate_text_3434 by removing the folder_text_3434
     if not project_name:
-        router._project_paths.path_folder_text_3434 = None
+        router._project_paths.path_folder_text_3434 = Path()
 
     mocked_generate_text = Mock()
     if project_name:

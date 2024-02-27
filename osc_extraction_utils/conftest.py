@@ -13,7 +13,6 @@ from osc_extraction_utils.paths import ProjectPaths
 from osc_extraction_utils.settings import (
     MainSettings,
     S3Settings,
-    Settings,
     get_main_settings,
     get_s3_settings,
 )
@@ -128,7 +127,7 @@ def s3_settings() -> S3Settings:
 
 # TODO add test mode paths?
 @pytest.fixture(scope="session")
-def project_paths(main_settings: Settings) -> ProjectPaths:
+def project_paths(main_settings: MainSettings) -> ProjectPaths:
     return ProjectPaths("test_project", main_settings)
 
 

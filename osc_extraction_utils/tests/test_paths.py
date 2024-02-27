@@ -13,7 +13,7 @@ def path_folder_config_path() -> Path:
 
 
 @pytest.fixture
-def paths_project(main_settings: Settings) -> ProjectPaths:
+def paths_project(main_settings: MainSettings) -> ProjectPaths:
     return ProjectPaths(string_project_name="test_project", main_settings=main_settings)
 
 
@@ -39,7 +39,7 @@ def test_python_executable_set(paths_project: ProjectPaths):
     assert paths_project.PYTHON_EXECUTABLE == "python"
 
 
-def test_check_that_all_required_paths_exist_in_project_path_object(main_settings: Settings):
+def test_check_that_all_required_paths_exist_in_project_path_object(main_settings: MainSettings):
     list_paths_expected = [
         "input/pdfs/training",
         "input/annotations",
@@ -66,7 +66,7 @@ def test_check_that_all_required_paths_exist_in_project_path_object(main_setting
             assert str(path_field_attribute) in list_paths_expected
 
 
-def test_project_paths_update_methods_are_called(main_settings: Settings):
+def test_project_paths_update_methods_are_called(main_settings: MainSettings):
     with (
         patch.object(ProjectPaths, "_update_all_paths_depending_on_path_project_data_folder") as mocked_update_data,
         patch.object(ProjectPaths, "_update_all_paths_depending_on_path_project_model_folder") as mocked_update_model,

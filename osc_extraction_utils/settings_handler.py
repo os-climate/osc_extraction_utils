@@ -1,8 +1,9 @@
 from pathlib import Path
+from typing import Type
 
 import yaml
 
-from osc_extraction_utils.settings import MainSettings, S3Settings, Settings
+from osc_extraction_utils.settings import MainSettings, S3Settings
 
 
 class SettingsHandler:
@@ -28,14 +29,14 @@ class SettingsHandler:
             raise FileNotFoundError
 
     @staticmethod
-    def _read_setting_file(path: Path) -> Settings:
+    def _read_setting_file(path: Path) -> S3Settings | MainSettings:
         with open(path, mode="r") as file_settings:
             loaded_settings: dict = yaml.safe_load(file_settings)
-        settings: Settings = SettingsHandler._settings_factory(loaded_settings)
+        settings: Type[S3Settings] | Type[MainSettings] = SettingsHandler._settings_factory(loaded_settings)
         return settings(**loaded_settings)
 
     @staticmethod
-    def _settings_factory(settings: dict) -> Settings:
+    def _settings_factory(settings: dict) -> Type[S3Settings] | Type[MainSettings]:
         if "main_bucket" in settings:
             return S3Settings
         else:

@@ -2,8 +2,11 @@ from pathlib import Path
 from unittest.mock import patch
 
 import pytest
-from osc_extraction_utils.conftest import create_multiple_xlsx_files, create_single_xlsx_file
 
+from osc_extraction_utils.conftest import (
+    create_multiple_xlsx_files,
+    create_single_xlsx_file,
+)
 from osc_extraction_utils.merger import Merger
 from osc_extraction_utils.paths import ProjectPaths
 from osc_extraction_utils.s3_communication import S3Communication

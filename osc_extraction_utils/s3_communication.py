@@ -26,7 +26,11 @@ class S3Communication(object):
     """
 
     def __init__(
-        self, s3_endpoint_url: str, aws_access_key_id: str, aws_secret_access_key: str, s3_bucket: str
+        self,
+        s3_endpoint_url: str | None,
+        aws_access_key_id: str | None,
+        aws_secret_access_key: str | None,
+        s3_bucket: str | None,
     ) -> None:
         """Initialize communicator."""
         self.s3_endpoint_url = s3_endpoint_url
