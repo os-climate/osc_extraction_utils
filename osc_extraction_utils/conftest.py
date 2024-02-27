@@ -112,7 +112,7 @@ def path_folder_temporary() -> Generator:
 
 @pytest.fixture(scope="session")
 def path_folder_root_testing() -> Generator:
-    path_folder_data_sample_ = project_tests_root() / "root_testing"
+    path_folder_data_sample_ = project_tests_root() / "tests" / "root_testing"
     yield path_folder_data_sample_
 
 

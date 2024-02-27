@@ -16,7 +16,7 @@ path_file_running = create_tmp_file_path()
 
 
 class ProjectPaths(BaseSettings):
-    _PATH_FOLDER_ROOT: Path = Path(__file__).parents[2].resolve()
+    _PATH_FOLDER_ROOT: Path = Path(__file__).parents[1].resolve()
     _PATH_FOLDER_NLP: Path = _PATH_FOLDER_ROOT
     _PATH_FOLDER_MODEL: Path = _PATH_FOLDER_ROOT / "models"
     _PATH_FOLDER_DATA: Path = _PATH_FOLDER_ROOT / "data"
