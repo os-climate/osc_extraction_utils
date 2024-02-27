@@ -7,11 +7,7 @@ from _pytest.capture import CaptureFixture
 
 from osc_extraction_utils.paths import ProjectPaths
 from osc_extraction_utils.router import Router
-from osc_extraction_utils.s3_communication import S3Communication
 from osc_extraction_utils.settings import MainSettings, S3Settings
-from tests.test_osc_extraction_utils.test_generate_text import (
-    prerequisites_generate_text,
-)
 
 
 @pytest.fixture
@@ -70,7 +66,7 @@ def test_run_router_extraction_liveness_up(
     status_code: int,
     cmd_output_expected: str,
     return_value_expected: bool,
-    capsys: typing.Generator[CaptureFixture[str], None, None],
+    capsys: CaptureFixture[str],
 ):
     extraction_ip = "0.0.0.0"
     extraction_port = 8000
@@ -131,7 +127,7 @@ def test_run_router_inference_liveness(
     status_code: int,
     cmd_output_expected: str,
     return_value_expected: bool,
-    capsys: typing.Generator[CaptureFixture[str], None, None],
+    capsys: CaptureFixture[str],
 ):
     inference_ip = "0.0.0.1"
     inference_port = 8000
@@ -169,7 +165,7 @@ def test_run_router_relevance_training(
     status_code: int,
     cmd_output_expected: str,
     return_value_expected: bool,
-    capsys: typing.Generator[CaptureFixture[str], None, None],
+    capsys: CaptureFixture[str],
 ):
     inference_ip = "0.0.0.1"
     inference_port = 8000
@@ -215,7 +211,7 @@ def test_run_router_kpi_training(
     status_code_train_kpi: int,
     cmd_output_expected: str,
     return_value_expected: bool,
-    capsys: typing.Generator[CaptureFixture[str], None, None],
+    capsys: CaptureFixture[str],
 ):
     inference_ip = "0.0.0.1"
     inference_port = 8000
@@ -262,4 +258,4 @@ def test_run_router_successful_run(
     with patch("osc_extraction_utils.merger.generate_text_3434", Mock()):
         router.run_router()
 
-    assert router.return_value == True
+    assert router.return_value is True

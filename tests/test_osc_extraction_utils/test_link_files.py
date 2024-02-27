@@ -1,5 +1,6 @@
 import shutil
 from pathlib import Path
+from typing import Generator
 
 import pytest
 
@@ -7,7 +8,7 @@ from osc_extraction_utils.utils import link_extracted_files, link_files
 
 
 @pytest.fixture(autouse=True)
-def path_folders_required_linking(path_folder_temporary: Path) -> None:
+def path_folders_required_linking(path_folder_temporary: Path) -> Generator[None, None, None]:
     """Defines a fixture for creating the source, source_pdf and destination folder
 
     :param path_folder_temporary: Requesting the path_folder_temporary fixture
@@ -35,7 +36,6 @@ def test_link_files(path_folder_temporary: Path):
     :type path_folder_temporary: Path
     """
     path_folder_source = path_folder_temporary / "source"
-    path_folder_source_pdf = path_folder_temporary / "source_pdf"
     path_folder_destination = path_folder_temporary / "destination"
 
     for i in range(10):
@@ -60,12 +60,8 @@ def test_link_extracted_files_result(path_folder_temporary: Path):
     path_folder_source_pdf = path_folder_temporary / "source_pdf"
     path_folder_destination = path_folder_temporary / "destination"
 
-    path_folder_source_file_pdf = path_folder_source / f"test.pdf"
-    path_folder_source_file_json = path_folder_source / f"test.json"
-    path_source_file_pdf = path_folder_source_pdf / f"test.pdf"
-
     result = link_extracted_files(str(path_folder_source), str(path_folder_source_pdf), str(path_folder_destination))
-    assert result == True
+    assert result is True
 
 
 def test_link_extracted_files_copy(path_folder_temporary: Path):
@@ -90,10 +86,10 @@ def test_link_extracted_files_copy(path_folder_temporary: Path):
 
     for i in range(10):
         path_current_file = path_folder_destination / f"test_{i}.json"
-        assert not path_current_file.exists() == True
+        assert not path_current_file.exists() is True
 
     link_extracted_files(str(path_folder_source), str(path_folder_source_pdf), str(path_folder_destination))
 
     for i in range(10):
         path_current_file = path_folder_destination / f"test_{i}.json"
-        assert path_current_file.exists() == True
+        assert path_current_file.exists() is True

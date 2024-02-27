@@ -1,5 +1,4 @@
 from pathlib import Path
-from unittest.mock import Mock, patch
 
 import pytest
 
@@ -63,7 +62,7 @@ def test_checking_onging_run(path_folder_root_testing: Path, training_monitor: T
     """
     # path_file_running = path_folder_root_testing / 'data' / 'running'
     path_file_running.touch()
-    assert training_monitor.check_running() == True
+    assert training_monitor.check_running() is True
 
 
 def test_checking_finished_run(path_folder_root_testing: Path, training_monitor: TrainingMonitor):
@@ -76,7 +75,7 @@ def test_checking_finished_run(path_folder_root_testing: Path, training_monitor:
     """
     # path_file_running = path_folder_root_testing / 'data' / 'running'
     path_file_running.unlink(missing_ok=True)
-    assert training_monitor.check_running() == False
+    assert training_monitor.check_running() is False
 
 
 def test_clear_running(path_folder_root_testing: Path, training_monitor: TrainingMonitor):

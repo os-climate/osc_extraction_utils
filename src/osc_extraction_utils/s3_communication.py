@@ -4,6 +4,7 @@ import os.path as osp
 import pathlib
 from enum import Enum
 from io import BytesIO
+from pathlib import Path
 
 import boto3
 import pandas as pd
@@ -24,7 +25,9 @@ class S3Communication(object):
     It connects with the bucket and provides methods to read and write data in parquet, csv, and json formats.
     """
 
-    def __init__(self, s3_endpoint_url, aws_access_key_id, aws_secret_access_key, s3_bucket):
+    def __init__(
+        self, s3_endpoint_url: str, aws_access_key_id: str, aws_secret_access_key: str, s3_bucket: str
+    ) -> None:
         """Initialize communicator."""
         self.s3_endpoint_url = s3_endpoint_url
         self.aws_access_key_id = aws_access_key_id
@@ -43,20 +46,20 @@ class S3Communication(object):
         status = s3_object.put(Body=buffer_bytes)
         return status
 
-    def _download_bytes(self, prefix, key):
+    def _download_bytes(self, prefix: str, key: str) -> bytes:
         """Download byte content in bucket/prefix/key to buffer."""
         buffer = BytesIO()
         s3_object = self.s3_resource.Object(self.bucket, osp.join(prefix, key))
         s3_object.download_fileobj(buffer)
         return buffer.getvalue()
 
-    def upload_file_to_s3(self, filepath, s3_prefix, s3_key):
+    def upload_file_to_s3(self, filepath: Path | str, s3_prefix: str, s3_key: str):
         """Read file from disk and upload to s3 bucket/prefix/key."""
         with open(filepath, "rb") as f:
             status = self._upload_bytes(f.read(), s3_prefix, s3_key)
         return status
 
-    def download_file_from_s3(self, filepath, s3_prefix, s3_key):
+    def download_file_from_s3(self, filepath: Path, s3_prefix: str, s3_key: str):
         """Download file from s3 bucket/prefix/key and save it to filepath on disk."""
         buffer_bytes = self._download_bytes(s3_prefix, s3_key)
         with open(filepath, "wb") as f:
@@ -110,7 +113,7 @@ class S3Communication(object):
         for fpath in upload_files_paths:
             self.upload_file_to_s3(fpath, s3_prefix, fpath.name)
 
-    def download_files_in_prefix_to_dir(self, s3_prefix, destination_dir):
+    def download_files_in_prefix_to_dir(self, s3_prefix, destination_dir) -> None:
         """
         Download all files under a prefix to a directory.
 

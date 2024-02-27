@@ -4,7 +4,7 @@ import sys
 from typing import Generator
 
 import pytest
-from utils_test import project_tests_root
+from utils_tests import project_tests_root
 
 from osc_extraction_utils.paths import ProjectPaths
 from osc_extraction_utils.settings import (

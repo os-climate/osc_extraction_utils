@@ -12,7 +12,7 @@ def converter() -> XlsToCsvConverter:
     return XlsToCsvConverter(Path("source_folder"), Path("destination_folder"))
 
 
-def test_convert_method_called(converter):
+def test_convert_method_called(converter) -> None:
     list_paths_sample: list[Path] = [Path()]
     mocked_find_files: Mock = Mock(return_value=list_paths_sample)
     mocked_check_xlsx_files: Mock = Mock()
@@ -33,7 +33,7 @@ def test_convert_method_called(converter):
     mocked_convert_file.assert_called_once_with(list_paths_sample[0])
 
 
-def test_convert_single_file_to_csv(converter):
+def test_convert_single_file_to_csv(converter) -> None:
     mocked_read_excel: Mock = Mock()
     path_destination_folder: Path = Path("destination_folder")
 
@@ -45,9 +45,9 @@ def test_convert_single_file_to_csv(converter):
     mocked_read_excel.return_value.to_csv.assert_called_once_with(path_destination_file, index=False, header=True)
 
 
-def test_find_xlsx_files_in_source_folder(converter):
+def test_find_xlsx_files_in_source_folder(converter) -> None:
     mocked_path_glob: Mock = Mock()
-    mocked_path_glob.return_value: list[Path] = [Path("file1.xlsx"), Path("file2.xlsx")]
+    mocked_path_glob.return_value = [Path("file1.xlsx"), Path("file2.xlsx")]
 
     with patch("osc_extraction_utils.core_utils.Path.glob", mocked_path_glob):
         list_paths_xlsx_files: list[Path] = converter._find_xlsx_files_in_source_folder()
@@ -56,7 +56,7 @@ def test_find_xlsx_files_in_source_folder(converter):
     assert list_paths_xlsx_files == [Path("file1.xlsx"), Path("file2.xlsx")]
 
 
-def test_check_xlsx_files_single_file(converter):
+def test_check_xlsx_files_single_file(converter) -> None:
     list_paths_xlsx_files: list[Path] = [Path("file.xlsx")]
 
     try:
@@ -65,29 +65,29 @@ def test_check_xlsx_files_single_file(converter):
         pytest.fail(f"An unexpected exception occurred: {e}")
 
 
-def test_check_xlsx_files_no_files(converter):
+def test_check_xlsx_files_no_files(converter) -> None:
     list_paths_xlsx_files: list = []
 
     with pytest.raises(AnnotationConversionError):
         converter._check_xlsx_files(list_paths_xlsx_files)
 
 
-def test_check_xlsx_files_multiple_files(converter):
+def test_check_xlsx_files_multiple_files(converter) -> None:
     list_paths_xlsx_files: list[Path] = [Path("file1.xlsx"), Path("file2.xlsx")]
 
     with pytest.raises(AnnotationConversionError):
         converter._check_xlsx_files(list_paths_xlsx_files)
 
 
-def test_check_for_valid_path_folder_source(converter):
-    converter._path_folder_source: Path = Path()
+def test_check_for_valid_path_folder_source(converter) -> None:
+    converter._path_folder_source = Path()
 
     with pytest.raises(AnnotationConversionError):
         converter._check_for_valid_paths()
 
 
-def test_check_for_valid_path_folder_destination(converter):
-    converter._path_folder_destination: Path = Path()
+def test_check_for_valid_path_folder_destination(converter) -> None:
+    converter._path_folder_destination = Path()
 
     with pytest.raises(AnnotationConversionError):
         converter._check_for_valid_paths()

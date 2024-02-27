@@ -1,5 +1,5 @@
 from pathlib import Path
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
 import pytest
 
@@ -71,7 +71,7 @@ def test_project_paths_update_methods_are_called(main_settings: Settings):
         patch.object(ProjectPaths, "_update_all_paths_depending_on_path_project_data_folder") as mocked_update_data,
         patch.object(ProjectPaths, "_update_all_paths_depending_on_path_project_model_folder") as mocked_update_model,
     ):
-        paths_project: ProjectPaths = ProjectPaths("new_test_project", main_settings)
+        ProjectPaths("new_test_project", main_settings)
 
     mocked_update_data.assert_called_once()
     mocked_update_model.assert_called_once()
@@ -79,13 +79,13 @@ def test_project_paths_update_methods_are_called(main_settings: Settings):
 
 def test_set_path_project_data_folder(paths_project: ProjectPaths):
     string_test_project: str = "test_project"
-    paths_project.string_project_name: str = string_test_project
+    paths_project.string_project_name = string_test_project
     assert paths_project.path_project_data_folder.parts[-1] == string_test_project
 
 
 def test_set_path_project_model_folder(paths_project: ProjectPaths):
     string_test_project: str = "test_project"
-    paths_project.string_project_name: str = string_test_project
+    paths_project.string_project_name = string_test_project
     assert paths_project.path_project_model_folder.parts[-1] == string_test_project
 
 
@@ -96,7 +96,7 @@ def test_setting_new_project_name_results_in_call_of_update_methods(paths_projec
         patch.object(paths_project, "_update_all_paths_depending_on_path_project_data_folder") as mocked_update_data,
         patch.object(paths_project, "_update_all_paths_depending_on_path_project_model_folder") as mocked_update_model,
     ):
-        paths_project.string_project_name: str = string_test_project
+        paths_project.string_project_name = string_test_project
 
     mocked_update_data.assert_called_once()
     mocked_update_model.assert_called_once()
@@ -106,13 +106,13 @@ def test_set_main_settings(paths_project: ProjectPaths, main_settings: Settings)
     main_settings_changed: MainSettings = MainSettings()
     main_settings_changed.general.project_name = "TEST_NEW"
 
-    paths_project.main_settings: MainSettings = main_settings_changed
+    paths_project.main_settings = main_settings_changed
     assert paths_project.main_settings != main_settings
 
 
 def test_update_all_paths_depending_on_path_project_data_folder(paths_project: ProjectPaths):
     string_test_project: str = "test_project"
-    paths_project.string_project_name: str = string_test_project
+    paths_project.string_project_name = string_test_project
 
     paths_project._update_all_paths_depending_on_path_project_data_folder()
 
@@ -123,16 +123,16 @@ def test_update_all_paths_depending_on_path_project_data_folder(paths_project: P
     ]
 
     for path_field in list_paths_model_fields_filtered:
-        path_field: Path = getattr(paths_project, f"{path_field}")
-        assert string_test_project in path_field.parts
+        path_current_field: Path = getattr(paths_project, f"{path_field}")
+        assert string_test_project in path_current_field.parts
 
 
 def test_update_all_paths_depending_on_path_project_model_folder(paths_project: ProjectPaths):
     main_settings_changed: MainSettings = MainSettings()
     main_settings_changed.general.project_name = "TEST_NEW"
-    paths_project._main_settings: MainSettings = main_settings_changed
+    paths_project._main_settings = main_settings_changed
     string_test_project: str = "test_project"
-    paths_project.string_project_name: str = string_test_project
+    paths_project.string_project_name = string_test_project
 
     paths_project._update_all_paths_depending_on_path_project_model_folder()
 
@@ -144,6 +144,6 @@ def test_update_all_paths_depending_on_path_project_model_folder(paths_project: 
         Path(paths_project.main_settings.train_kpi.output_model_name),
     ]
     for path_model_field, path_main_settings in zip(list_paths_model_fields_filtered, list_paths_main_settings):
-        path_model_field: Path = getattr(paths_project, f"{path_model_field}")
-        assert string_test_project in path_model_field.parts
-        assert path_model_field.parts[-1] == path_main_settings.name
+        path_model_current_field: Path = getattr(paths_project, f"{path_model_field}")
+        assert string_test_project in path_model_current_field.parts
+        assert path_model_current_field.parts[-1] == path_main_settings.name

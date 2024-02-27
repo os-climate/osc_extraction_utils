@@ -1,5 +1,6 @@
 import shutil
 from pathlib import Path
+from typing import Generator
 from unittest.mock import patch
 
 import pytest
@@ -13,7 +14,7 @@ from osc_extraction_utils.core_utils import (
 
 
 @pytest.fixture()
-def prerequisites_copy_file_without_overwrite(path_folder_temporary: Path) -> None:
+def prerequisites_copy_file_without_overwrite(path_folder_temporary: Path) -> Generator[None, None, None]:
     """Defines a fixture for creating the source and destination folder
 
     :param path_folder_temporary: Requesting the path_folder_temporary fixture
@@ -92,7 +93,7 @@ def test_copy_file_without_overwrite_result(prerequisites_copy_file_without_over
     path_folder_source_file.touch()
 
     result = copy_file_without_overwrite(str(path_folder_source), str(path_folder_destination))
-    assert result == True
+    assert result is True
 
 
 def test_copy_file_without_overwrite_file_not_exists(

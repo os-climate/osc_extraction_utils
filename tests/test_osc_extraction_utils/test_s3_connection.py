@@ -8,12 +8,7 @@ from osc_extraction_utils.core_utils import (
     upload_data_from_local_folder_to_s3_interim_bucket_if_required,
 )
 from osc_extraction_utils.s3_communication import S3Communication
-from osc_extraction_utils.settings import (
-    General,
-    MainSettings,
-    Settings,
-    get_s3_settings,
-)
+from osc_extraction_utils.settings import Settings
 
 # S3Settings = get_s3_settings()
 

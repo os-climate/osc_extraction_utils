@@ -8,6 +8,7 @@ from osc_extraction_utils.settings import MainSettings, S3Settings
 
 
 class Merger:
+    # TODO finish Merger class
     def __init__(self, main_settings: MainSettings, s3_settings: S3Settings, project_paths: ProjectPaths) -> None:
         self.main_settings: MainSettings = main_settings
         self.s3_settings: S3Settings = s3_settings
@@ -45,9 +46,8 @@ class Merger:
             / "RELEVANCE"
             / "Text"
         )
-        self.s3_communication_main.download_files_in_prefix_to_dir(
-            str(path_file_related_s3), str(self.project_paths.path_folder_relevance)
-        )
+        # TODO wrong type
+        self.s3_communication_main.download_files_in_prefix_to_dir(str(path_file_related_s3), str(self.project_paths.path_folder_relevance))  # type: ignore
 
     def _upload_inference_related_files_to_s3(self) -> None:
         path_file_upload_to_s3: Path = (
@@ -58,13 +58,10 @@ class Merger:
             / "ml"
             / "text_3434.csv"
         )
-        self.s3_communication_interim.upload_file_to_s3(
-            filepath=str(path_file_upload_to_s3),
-            s3_prefix=str(path_file_upload_to_s3.parent),
-            s3_key=str(path_file_upload_to_s3.name),
-        )
+        # TODO wrong type
+        self.s3_communication_interim.upload_file_to_s3(filepath=str(path_file_upload_to_s3), s3_prefix=str(path_file_upload_to_s3.parent), s3_key=str(path_file_upload_to_s3.name))  # type: ignore
 
-    def _weird_writing_stuff(self) -> None:
+    def _weird_writing_stuff(self) -> bool:
         with open(str(self.project_paths.path_folder_text_3434) + r"/text_3434.csv", "w") as file_out:
             very_first = True
             rel_inf_list = list(glob.iglob(str(self.project_paths.path_folder_relevance) + r"/*.csv"))
@@ -82,6 +79,7 @@ class Merger:
                                 file_out.write(line)
                             first = False
                         very_first = False
+                return True  # TODO added here to comform mypy, is this required?
             except Exception:
                 return False
 

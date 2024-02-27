@@ -1,11 +1,9 @@
-from pathlib import Path
 from unittest.mock import patch
 
 import pytest
+from utils_tests import project_tests_root
 
-from osc_extraction_utils.settings import MainSettings, S3Settings
 from osc_extraction_utils.settings_handler import SettingsHandler
-from tests.utils_test import project_tests_root
 
 
 @pytest.fixture()

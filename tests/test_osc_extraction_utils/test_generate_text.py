@@ -1,22 +1,22 @@
 import shutil
-
-# types
-import typing
 from pathlib import Path
-from unittest.mock import Mock, call, patch
+from typing import Generator
+from unittest.mock import Mock, patch
 
 import pytest
 from _pytest.capture import CaptureFixture
+from utils_tests import write_to_file
 
 from osc_extraction_utils.merger import generate_text_3434
 from osc_extraction_utils.paths import ProjectPaths
 from osc_extraction_utils.s3_communication import S3Communication
 from osc_extraction_utils.settings import S3Settings
-from tests.utils_test import write_to_file
 
 
 @pytest.fixture(autouse=True)
-def prerequisites_generate_text(path_folder_temporary: Path, project_paths: ProjectPaths) -> None:
+def prerequisites_generate_text(
+    path_folder_temporary: Path, project_paths: ProjectPaths
+) -> Generator[None, None, None]:
     """Defines a fixture for mocking all required paths and creating required temporary folders
 
     :param path_folder_temporary: Requesting the path_folder_temporary fixture
@@ -55,8 +55,6 @@ def test_generate_text_with_s3(path_folder_temporary: Path, project_paths: Path)
     :param path_folder_temporary: Requesting the path_folder_temporary fixture
     :type path_folder_temporary: Path
     """
-    # get the path to the temporary folder
-    path_folder_text_3434 = path_folder_temporary / "folder_test_3434"
     project_name = "test"
 
     mocked_s3_settings = {
@@ -145,11 +143,11 @@ def test_generate_text_successful(path_folder_temporary: Path, project_paths: Pa
     project_settings = None
 
     return_value = generate_text_3434(project_name, s3_usage, project_settings, project_paths=project_paths)
-    assert return_value == True
+    assert return_value is True
 
 
 def test_generate_text_not_successful_empty_folder(
-    path_folder_temporary: Path, project_paths: Path, capsys: typing.Generator[CaptureFixture[str], None, None]
+    path_folder_temporary: Path, project_paths: Path, capsys: CaptureFixture[str]
 ):
     """Tests if the function returns false
     Requesting prerequisites_generate_text automatically (autouse)
@@ -165,14 +163,16 @@ def test_generate_text_not_successful_empty_folder(
 
     # clear the relevance folder
     path_folder_relevance = path_folder_temporary / "relevance"
-    [file.unlink() for file in path_folder_relevance.glob("*") if file.is_file()]
+    for file in path_folder_relevance.glob("*"):
+        if file.is_file():
+            file.unlink()
 
     # call the function
     return_value = generate_text_3434(project_name, s3_usage, project_settings, project_paths=project_paths)
 
     output_cmd, _ = capsys.readouterr()
     assert "No relevance inference results found." in output_cmd
-    assert return_value == False
+    assert return_value is False
 
 
 def test_generate_text_not_successful_exception(path_folder_temporary: Path, project_paths: Path):
@@ -188,10 +188,12 @@ def test_generate_text_not_successful_exception(path_folder_temporary: Path, pro
 
     # clear the relevance folder
     path_folder_relevance = path_folder_temporary / "relevance"
-    [file.unlink() for file in path_folder_relevance.glob("*") if file.is_file()]
+    for file in path_folder_relevance.glob("*"):
+        if file.is_file():
+            file.unlink()
 
     # patch glob.iglob to force an exception...
     with patch("osc_extraction_utils.merger.glob.iglob", side_effect=lambda *args: [None]):
         return_value = generate_text_3434(project_name, s3_usage, project_settings, project_paths=project_paths)
 
-        assert return_value == False
+        assert return_value is False
