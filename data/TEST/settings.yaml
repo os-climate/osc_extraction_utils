@@ -1,0 +1,140 @@
+---
+general:
+  ext_ip: 172.30.15.68
+  ext_port: 4000
+  infer_ip: 172.30.88.213
+  infer_port: 6000
+  rb_ip: 172.30.224.91
+  rb_port: 8000
+  delete_interim_files: true
+data_export:
+  enable_db_export: false
+  db_dialect: oracle
+  db_sql_driver: cx_oracle
+  db_host: ""
+  db_port: "1521"
+  db_user: ""
+  db_password: ""
+  db_post_command: ""
+extraction:
+  min_paragraph_length: 20
+  seed: 42
+  annotation_folder: null
+  skip_extracted_files: true
+  use_extractions: true
+  store_extractions: true
+curation:
+  retrieve_paragraph: false
+  neg_pos_ratio: 1
+  columns_to_read:
+    - company
+    - source_file
+    - source_page
+    - kpi_id
+    - year
+    - answer
+    - data_type
+    - relevant_paragraphs
+  company_to_exclude: []
+  create_neg_samples: true
+  min_length_neg_sample: 50
+  seed: 41
+train_relevance:
+  base_model: roberta-base
+  input_model_name: null
+  output_model_name: TEST_1
+  train: true
+  seed: 42
+  processor:
+    proc_max_seq_len: 512
+    proc_dev_split: 0.2
+    proc_label_list:
+      - "0"
+      - "1"
+    proc_label_column_name: label
+    proc_delimiter: ","
+    proc_metric: acc
+  model:
+    model_layer_dims:
+      - 768
+      - 2
+    model_lm_output_types:
+      - per_sequence
+  training:
+    run_hyp_tuning: false
+    use_amp: true
+    distributed: false
+    learning_rate: 0.00001
+    n_epochs: 10
+    evaluate_every: 100
+    dropout: 0.2
+    batch_size: 4
+    grad_acc_steps: 1
+    run_cv: false
+    xval_folds: 5
+    max_processes: 128
+infer_relevance:
+  skip_processed_files: true
+  batch_size: 16
+  gpu: true
+  num_processes: null
+  disable_tqdm: true
+  kpi_questions: []
+  sectors:
+    - OG
+    - CM
+    - CU
+  return_class_probs: false
+train_kpi:
+  input_model_name: null
+  output_model_name: TEST_1
+  base_model: a-ware/roberta-large-squadv2
+  train: true
+  seed: 42
+  curation:
+    val_ratio: 0
+    seed: 42
+    find_new_answerable: true
+    create_unanswerable: true
+  data:
+    perform_splitting: true
+    dev_split: 0.2
+  mlflow:
+    track_experiment: false
+    url: http://localhost:5000
+  processor:
+    max_seq_len: 384
+    label_list:
+      - start_token
+      - end_token
+    metric: squad
+  model:
+    model_layer_dims:
+      - 768
+      - 2
+    model_lm_output_types:
+      - per_token
+  training:
+    run_hyp_tuning: false
+    use_amp: true
+    distributed: false
+    learning_rate: 0.00001
+    n_epochs: 10
+    evaluate_every: 100
+    dropout: 0.3
+    batch_size: 4
+    grad_acc_steps: 1
+    run_cv: false
+    xval_folds: 5
+    metric: f1
+    max_processes: 1
+infer_kpi:
+  skip_processed_files: false
+  top_k: 4
+  batch_size: 16
+  gpu: true
+  num_processes: null
+  no_ans_boost: -15
+rule_based:
+  verbosity: 2
+  use_docker: true

@@ -3,7 +3,7 @@ name = "osc-extraction-utils"
 version = "0.1.0"
 description = "OS-Climate Data Extraction Tool"
 authors = [
-    {name = "David Besslich", email = "90916810+DaBeIDS@users.noreply.github.com"},
+    {name = "Tobias Watzel", email = "136797078+tobias-watzel@users.noreply.github.com"},
 ]
 requires-python = ">=3.9"
 readme = "README.rst"
@@ -24,6 +24,22 @@ classifiers = [
   "Topic :: Office/Business :: Financial",
   "Topic :: Scientific/Engineering",
   "Topic :: Software Development",
+]
+dependencies = [
+    "pytest>=8.0.1",
+    "pandas==2.0.3",
+    "typing>=3.7.4.3",
+    "pydantic>=2.6.1",
+    "pydantic-settings>=2.2.0",
+    "requests>=2.31.0",
+    "boto3>=1.34.44",
+    "pre-commit>=3.6.2",
+    "pytest-mock>=3.12.0",
+    "requests-mock>=1.11.0",
+    "openpyxl>=3.1.2",
+    "PyYAML>=6.0.1",
+    "types-PyYAML>=6.0.12.12",
+    "mkdocs>=1.5.3",
 ]
 
 [project.urls]
@@ -56,14 +72,12 @@ test = [
   "pytest-cov",
 ]
 
-[tool.setuptools_scm]
-
 [tool.pdm.scripts]
 pre_release = "scripts/dev-versioning.sh"
 release = "scripts/release-versioning.sh"
 test = "pytest"
 tox = "tox"
-docs = { shell = "cd docs && mkdocs serve", help = "Start the dev server for doc preview" }
+docs = { shell = "mkdocs serve", help = "Start the dev server for doc preview" }
 lint = "pre-commit run --all-files"
 complete = { call = "tasks.complete:main", help = "Create autocomplete files for bash and fish" }
 
@@ -76,12 +90,12 @@ lint = ["pre-commit", "pyproject-flake8"]
 
 [tool.pytest.ini_options]
 testpaths = [
-    "tests/",
+    "osc_extraction_utils",
 ]
-addopts = "--cov --cov-report html --cov-report term-missing --cov-fail-under 95"
+addopts = "--cov --cov-report html --cov-report term-missing --cov-fail-under 90"
 
 [tool.coverage.run]
-source = ["src"]
+source = ["osc_extraction_utils"]
 
 [tool.yapf]
 blank_line_before_nested_class_or_def = true

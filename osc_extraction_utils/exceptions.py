@@ -1,0 +1,2 @@
+class AnnotationConversionError(Exception):
+    pass
