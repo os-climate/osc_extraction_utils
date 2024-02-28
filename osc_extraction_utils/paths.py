@@ -16,7 +16,7 @@ path_file_running = create_tmp_file_path()
 
 
 class ProjectPaths(BaseSettings):
-    _PATH_FOLDER_ROOT: Path = Path(__file__).parents[1].resolve()
+    _PATH_FOLDER_ROOT: Path = Path()
     _PATH_FOLDER_NLP: Path = _PATH_FOLDER_ROOT
     _PATH_FOLDER_MODEL: Path = _PATH_FOLDER_ROOT / "models"
     _PATH_FOLDER_DATA: Path = _PATH_FOLDER_ROOT / "data"
@@ -44,11 +44,16 @@ class ProjectPaths(BaseSettings):
     path_folder_text_3434: Path = Field(default=Path("interim/ml"))
     path_folder_relevance: Path = Field(default=Path("output/RELEVANCE/Text"))
 
-    def __init__(self, string_project_name: str, main_settings: MainSettings, **kwargs):
+    def __init__(self, string_project_name: str, main_settings: MainSettings, 
+                 path_folder_root: Path, **kwargs):
         super().__init__(**kwargs)
         if not isinstance(string_project_name, str):
             raise TypeError
         self._string_project_name: str = string_project_name
+        self._PATH_FOLDER_ROOT = path_folder_root.resolve()
+        self._PATH_FOLDER_NLP: Path = self._PATH_FOLDER_ROOT
+        self._PATH_FOLDER_MODEL: Path = self._PATH_FOLDER_ROOT / "models"
+        self._PATH_FOLDER_DATA: Path = self._PATH_FOLDER_ROOT / "data"
         self._path_project_data_folder: Path = self._PATH_FOLDER_DATA / Path(string_project_name)
         self._path_project_model_folder: Path = self._PATH_FOLDER_MODEL / Path(string_project_name)
         self._main_settings: MainSettings = main_settings
@@ -88,6 +93,15 @@ class ProjectPaths(BaseSettings):
     @property
     def PATH_FOLDER_ROOT(self) -> Path:
         return self._PATH_FOLDER_ROOT
+    
+    @PATH_FOLDER_ROOT.setter
+    def PATH_FOLDER_ROOT(self, PATH_FOLDER_ROOT_NEW: Path) -> None:
+        if not isinstance(PATH_FOLDER_ROOT_NEW, Path):
+            raise TypeError
+        self._PATH_FOLDER_ROOT = PATH_FOLDER_ROOT_NEW
+        self._PATH_FOLDER_NLP: Path = PATH_FOLDER_ROOT_NEW
+        self._PATH_FOLDER_MODEL: Path = PATH_FOLDER_ROOT_NEW / "models"
+        self._PATH_FOLDER_DATA: Path = PATH_FOLDER_ROOT_NEW / "data"
 
     @property
     def PATH_FOLDER_NLP(self) -> Path:
