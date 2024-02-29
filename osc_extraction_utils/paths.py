@@ -44,21 +44,19 @@ class ProjectPaths(BaseSettings):
     path_folder_text_3434: Path = Field(default=Path("interim/ml"))
     path_folder_relevance: Path = Field(default=Path("output/RELEVANCE/Text"))
 
-    def __init__(self, string_project_name: str, main_settings: MainSettings, 
-                 path_folder_root: Path, **kwargs):
+    def __init__(self, string_project_name: str, main_settings: MainSettings, path_folder_root: Path, **kwargs):
         super().__init__(**kwargs)
         if not isinstance(string_project_name, str):
             raise TypeError
         self._string_project_name: str = string_project_name
         self._PATH_FOLDER_ROOT = path_folder_root.resolve()
-        self._PATH_FOLDER_NLP: Path = self._PATH_FOLDER_ROOT
-        self._PATH_FOLDER_MODEL: Path = self._PATH_FOLDER_ROOT / "models"
-        self._PATH_FOLDER_DATA: Path = self._PATH_FOLDER_ROOT / "data"
         self._path_project_data_folder: Path = self._PATH_FOLDER_DATA / Path(string_project_name)
         self._path_project_model_folder: Path = self._PATH_FOLDER_MODEL / Path(string_project_name)
         self._main_settings: MainSettings = main_settings
         self._update_all_paths_depending_on_path_project_data_folder()
         self._update_all_paths_depending_on_path_project_model_folder()
+        self._update_all_root_related_paths()
+        self._create_all_root_related_folders()
 
     @property
     def string_project_name(self) -> str:
@@ -93,15 +91,14 @@ class ProjectPaths(BaseSettings):
     @property
     def PATH_FOLDER_ROOT(self) -> Path:
         return self._PATH_FOLDER_ROOT
-    
+
     @PATH_FOLDER_ROOT.setter
-    def PATH_FOLDER_ROOT(self, PATH_FOLDER_ROOT_NEW: Path) -> None:
-        if not isinstance(PATH_FOLDER_ROOT_NEW, Path):
+    def PATH_FOLDER_ROOT(self, path_folder_root_new: Path) -> None:
+        if not isinstance(path_folder_root_new, Path):
             raise TypeError
-        self._PATH_FOLDER_ROOT = PATH_FOLDER_ROOT_NEW
-        self._PATH_FOLDER_NLP: Path = PATH_FOLDER_ROOT_NEW
-        self._PATH_FOLDER_MODEL: Path = PATH_FOLDER_ROOT_NEW / "models"
-        self._PATH_FOLDER_DATA: Path = PATH_FOLDER_ROOT_NEW / "data"
+        self._PATH_FOLDER_ROOT = path_folder_root_new
+        self._update_all_root_related_paths()
+        self._create_all_root_related_folders()
 
     @property
     def PATH_FOLDER_NLP(self) -> Path:
@@ -129,6 +126,15 @@ class ProjectPaths(BaseSettings):
             setattr(
                 self, f"{path_field}", self._PATH_FOLDER_DATA / Path(self._string_project_name) / path_field_default
             )
+
+    def _update_all_root_related_paths(self) -> None:
+        self._PATH_FOLDER_NLP: Path = self.PATH_FOLDER_ROOT
+        self._PATH_FOLDER_MODEL: Path = self.PATH_FOLDER_ROOT / "models"
+        self._PATH_FOLDER_DATA: Path = self.PATH_FOLDER_ROOT / "data"
+
+    def _create_all_root_related_folders(self) -> None:
+        self._PATH_FOLDER_MODEL.mkdir(parents=True, exist_ok=True)  # includes root folder
+        self._PATH_FOLDER_DATA.mkdir(exist_ok=True)
 
     def _update_all_paths_depending_on_path_project_model_folder(self) -> None:
         list_string_paths_depending_on_path_project_model_folder: list[str] = [
