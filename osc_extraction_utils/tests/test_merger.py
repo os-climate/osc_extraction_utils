@@ -112,8 +112,9 @@ def test_write_output(merger: Merger, path_folder_temporary: Path):
     path_folder_relevance: Path = path_folder_temporary / "folder_relevance"
     create_multiple_xlsx_files(path_folder_relevance)
 
-    with patch.object(merger.project_paths, "path_folder_text_3434", path_file_text_3434), patch.object(
-        merger.project_paths, "path_folder_relevance", path_folder_relevance
+    with (
+        patch.object(merger.project_paths, "path_folder_text_3434", path_file_text_3434),
+        patch.object(merger.project_paths, "path_folder_relevance", path_folder_relevance),
     ):
         merger._weird_writing_stuff()
 

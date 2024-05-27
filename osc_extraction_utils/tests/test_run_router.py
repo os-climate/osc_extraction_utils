@@ -232,8 +232,9 @@ def test_run_router_kpi_training(
     else:
         mocked_generate_text.side_effect = Exception()
 
-    with patch("osc_extraction_utils.router.generate_text_3434", mocked_generate_text), patch.object(
-        main_settings, "train_kpi", Mock(train=train_kpi)
+    with (
+        patch("osc_extraction_utils.router.generate_text_3434", mocked_generate_text),
+        patch.object(main_settings, "train_kpi", Mock(train=train_kpi)),
     ):
         server.get(server_address_node_infer_relevance, status_code=status_code_infer_relevance)
         server.get(server_address_node_train_kpi, status_code=status_code_train_kpi)

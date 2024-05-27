@@ -56,8 +56,9 @@ def test_check_that_all_required_paths_exist_in_project_path_object(main_setting
         "output/RELEVANCE/Text",
     ]
 
-    with patch.object(ProjectPaths, "_update_all_paths_depending_on_path_project_data_folder"), patch.object(
-        ProjectPaths, "_update_all_paths_depending_on_path_project_model_folder"
+    with (
+        patch.object(ProjectPaths, "_update_all_paths_depending_on_path_project_data_folder"),
+        patch.object(ProjectPaths, "_update_all_paths_depending_on_path_project_model_folder"),
     ):
         paths_project: ProjectPaths = ProjectPaths("new_test_project", main_settings)
 
