@@ -1,5 +1,5 @@
 ---
-name: "🧪 Test builds (Matrix)"
+name: "🧱 Builds (Matrix)"
 
 # yamllint disable-line rule:truthy
 on:
@@ -11,15 +11,21 @@ on:
       - "!update-devops-tooling"
 
 jobs:
-  pre-release:
+  parse-project-metadata:
+    name: "Determine Python versions"
+    # yamllint disable-line rule:line-length
+    uses: os-climate/devops-reusable-workflows/.github/workflows/pyproject-toml-fetch-matrix.yaml@main
+
+  test-builds:
+    name: "Build: Python"
+    needs: [parse-project-metadata]
     runs-on: "ubuntu-latest"
     continue-on-error: true
     # Don't run when pull request is merged
     if: github.event.pull_request.merged == false
     strategy:
       fail-fast: false
-      matrix:
-        python-version: ["3.9", "3.10", "3.11"]
+      matrix: ${{ fromJson(needs.parse-project-metadata.outputs.matrix) }}
 
     steps:
       - name: "Populate environment variables"
@@ -41,10 +47,10 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: "Install dependencies"
-        run: |
-          python -m pip install --upgrade pip
-          pip install tox tox-gh-actions
+      - name: "Setup PDM for build commands"
+        uses: pdm-project/setup-pdm@v4
+        with:
+          python-version: ${{ matrix.python-version }}
 
       - name: "Tag for test release"
         # Delete all local tags, then create a synthetic tag for testing
@@ -56,6 +62,27 @@ jobs:
           git checkout "tags/v${{ steps.setenv.outputs.vernum }}"
           grep version pyproject.toml
 
-      - name: "Build with TOX"
+      - name: "Performing build"
         run: |
-          tox -e build
+          python -m pip install --upgrade pip
+          if [ -f tox.ini ]; then
+            pip install tox tox-gh-actions
+            echo "Found file: tox.ini"
+            echo "Building with command: tox -e build"
+            tox -e build
+          elif [ -f pyproject.toml ]; then
+            echo "Found file: pyproject.toml"
+            echo "Building with command: pdm build"
+            pdm build
+          else
+            echo "Neither file found: tox.ini/pyproject.toml"
+            pip install --upgrade build
+            echo "Attempting build with: python -m build"
+            python -m build
+          fi
+
+      - name: "Validating Artefacts with Twine"
+        run: |
+          echo "Validating artefacts with: twine check dist/*"
+          pip install --upgrade twine
+          twine check dist/*
