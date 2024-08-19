@@ -35,13 +35,16 @@ def save_train_info(
         # s3_settings = project_settings["s3_settings"]
         project_prefix = s3_settings.prefix + "/" + project_name + "/data"
         s3c_main.download_files_in_prefix_to_dir(
-            project_prefix + "/input/kpi_mapping", str(project_paths.path_folder_source_mapping)
+            project_prefix + "/input/kpi_mapping",
+            str(project_paths.path_folder_source_mapping),
         )
         s3c_main.download_files_in_prefix_to_dir(
-            project_prefix + "/input/annotations", str(project_paths.path_folder_source_annotation)
+            project_prefix + "/input/annotations",
+            str(project_paths.path_folder_source_annotation),
         )
         s3c_main.download_files_in_prefix_to_dir(
-            project_prefix + "/input/pdfs/training", str(project_paths.path_folder_source_pdf)
+            project_prefix + "/input/pdfs/training",
+            str(project_paths.path_folder_source_pdf),
         )
 
     dir_train: dict[str, Any] = {}
@@ -57,12 +60,21 @@ def save_train_info(
                 dir_train.update(
                     {
                         "annotations": pd.read_excel(
-                            str(project_paths.path_folder_source_annotation) + r"/" + filename, engine="openpyxl"
+                            str(project_paths.path_folder_source_annotation)
+                            + r"/"
+                            + filename,
+                            engine="openpyxl",
                         )
                     }
                 )
                 first = False
-    dir_train.update({"kpis": pd.read_csv(str(project_paths.path_folder_source_mapping) + "/kpi_mapping.csv")})
+    dir_train.update(
+        {
+            "kpis": pd.read_csv(
+                str(project_paths.path_folder_source_mapping) + "/kpi_mapping.csv"
+            )
+        }
+    )
 
     # relevance_model = project_settings['train_relevance']['output_model_name']
     relevance_model = main_settings.train_relevance.output_model_name
@@ -70,7 +82,9 @@ def save_train_info(
     kpi_model = main_settings.train_kpi.output_model_name
 
     name_out = str(project_paths.path_project_model_folder)
-    name_out = name_out + "/SUMMARY_REL_" + relevance_model + "_KPI_" + kpi_model + ".pickle"
+    name_out = (
+        name_out + "/SUMMARY_REL_" + relevance_model + "_KPI_" + kpi_model + ".pickle"
+    )
 
     with open(name_out, "wb") as handle:
         pickle.dump(dir_train, handle, protocol=pickle.HIGHEST_PROTOCOL)

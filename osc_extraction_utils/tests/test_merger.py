@@ -19,7 +19,9 @@ from osc_extraction_utils.settings import (
 
 
 @pytest.fixture
-def merger(main_settings: MainSettings, s3_settings: S3Settings, project_paths: ProjectPaths):
+def merger(
+    main_settings: MainSettings, s3_settings: S3Settings, project_paths: ProjectPaths
+):
     return Merger(main_settings, s3_settings, project_paths)
 
 
@@ -28,7 +30,9 @@ def test_setup_s3_usage(merger: Merger, s3_usage: bool):
     with (
         patch.object(merger.main_settings.general, "s3_usage", s3_usage),
         patch.object(merger.s3_settings.main_bucket, "s3_endpoint", "https://0.0.0.0"),
-        patch.object(merger.s3_settings.interim_bucket, "s3_endpoint", "https://0.0.0.0"),
+        patch.object(
+            merger.s3_settings.interim_bucket, "s3_endpoint", "https://0.0.0.0"
+        ),
     ):
         merger._setup_s3_usage()
 
@@ -40,7 +44,9 @@ def test_setup_s3_usage(merger: Merger, s3_usage: bool):
         assert merger.s3_communication_interim is None
 
 
-@pytest.mark.parametrize("bucket_settings_object", [MainBucketSettings, InterimBucketSettings])
+@pytest.mark.parametrize(
+    "bucket_settings_object", [MainBucketSettings, InterimBucketSettings]
+)
 def test_return_s3_communication_main(
     merger: Merger, bucket_settings_object: MainBucketSettings | InterimBucketSettings
 ):
@@ -54,7 +60,9 @@ def test_return_s3_communication_main(
     with (
         patch("osc_extraction_utils.merger.S3Communication") as mocked_s3_communication,
         patch("osc_extraction_utils.merger.os.getenv", side_effect=lambda args: args),
-        patch.object(merger.s3_settings, "main_bucket", bucket_settings_object(**settings)),
+        patch.object(
+            merger.s3_settings, "main_bucket", bucket_settings_object(**settings)
+        ),
     ):
         merger._return_s3_communication_main()
 
@@ -99,7 +107,9 @@ def test_upload_to_s3(merger: Merger):
         merger._upload_inference_related_files_to_s3()
 
     mocked_s3_communication.upload_file_to_s3.assert_called_with(
-        filepath=str(path_local_file), s3_prefix=str(path_local_file.parent), s3_key=str(path_local_file.name)
+        filepath=str(path_local_file),
+        s3_prefix=str(path_local_file.parent),
+        s3_key=str(path_local_file.name),
     )
 
 
@@ -112,7 +122,9 @@ def test_write_output(merger: Merger, path_folder_temporary: Path):
     path_folder_relevance: Path = path_folder_temporary / "folder_relevance"
     create_multiple_xlsx_files(path_folder_relevance)
 
-    with patch.object(merger.project_paths, "path_folder_text_3434", path_file_text_3434), patch.object(
+    with patch.object(
+        merger.project_paths, "path_folder_text_3434", path_file_text_3434
+    ), patch.object(
         merger.project_paths, "path_folder_relevance", path_folder_relevance
     ):
         merger._weird_writing_stuff()

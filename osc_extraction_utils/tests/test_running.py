@@ -53,7 +53,9 @@ def test_set_running(path_folder_root_testing: Path, training_monitor: TrainingM
     assert path_file_running.exists()
 
 
-def test_checking_onging_run(path_folder_root_testing: Path, training_monitor: TrainingMonitor):
+def test_checking_onging_run(
+    path_folder_root_testing: Path, training_monitor: TrainingMonitor
+):
     """Tests the return value of check_running for ongoing runs
 
     :param prerequisite_running: Fixture for prerequisite of running funcions
@@ -66,7 +68,9 @@ def test_checking_onging_run(path_folder_root_testing: Path, training_monitor: T
     assert training_monitor.check_running() is True
 
 
-def test_checking_finished_run(path_folder_root_testing: Path, training_monitor: TrainingMonitor):
+def test_checking_finished_run(
+    path_folder_root_testing: Path, training_monitor: TrainingMonitor
+):
     """Tests the return value of check_running for finished runs
 
     :param prerequisite_running: Fixture for prerequisite of running funcions
@@ -79,7 +83,9 @@ def test_checking_finished_run(path_folder_root_testing: Path, training_monitor:
     assert training_monitor.check_running() is False
 
 
-def test_clear_running(path_folder_root_testing: Path, training_monitor: TrainingMonitor):
+def test_clear_running(
+    path_folder_root_testing: Path, training_monitor: TrainingMonitor
+):
     """Tests for clearing running file
 
     :param prerequisite_running: Fixture for prerequisite of running funcions

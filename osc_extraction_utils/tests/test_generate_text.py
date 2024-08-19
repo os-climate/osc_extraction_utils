@@ -9,7 +9,11 @@ from osc_extraction_utils.s3_communication import S3Communication
 from osc_extraction_utils.settings import S3Settings
 
 
-def test_generate_text_with_s3(prerequisites_generate_text, path_folder_temporary: Path, project_paths: ProjectPaths):
+def test_generate_text_with_s3(
+    prerequisites_generate_text,
+    path_folder_temporary: Path,
+    project_paths: ProjectPaths,
+):
     """Tests if the s3 connection objects are created and their methods are called
     Requesting prerequisites_generate_text automatically (autouse)
 
@@ -34,8 +38,15 @@ def test_generate_text_with_s3(prerequisites_generate_text, path_folder_temporar
         },
     }
 
-    with patch("osc_extraction_utils.merger.S3Communication", Mock(spec=S3Communication)) as mocked_s3:
-        generate_text_3434(project_name, True, S3Settings(**mocked_s3_settings), project_paths=project_paths)
+    with patch(
+        "osc_extraction_utils.merger.S3Communication", Mock(spec=S3Communication)
+    ) as mocked_s3:
+        generate_text_3434(
+            project_name,
+            True,
+            S3Settings(**mocked_s3_settings),
+            project_paths=project_paths,
+        )
 
     # check for calls
     mocked_s3.assert_any_call(
@@ -52,12 +63,17 @@ def test_generate_text_with_s3(prerequisites_generate_text, path_folder_temporar
     )
 
     call_list = [call[0] for call in mocked_s3.mock_calls]
-    assert any([call for call in call_list if "download_files_in_prefix_to_dir" in call])
+    assert any(
+        [call for call in call_list if "download_files_in_prefix_to_dir" in call]
+    )
     assert any([call for call in call_list if "upload_file_to_s3" in call])
 
 
 def test_generate_text_no_s3(
-    prerequisites_generate_text, path_folder_temporary: Path, project_paths: ProjectPaths, s3_settings: S3Settings
+    prerequisites_generate_text,
+    path_folder_temporary: Path,
+    project_paths: ProjectPaths,
+    s3_settings: S3Settings,
 ):
     """Tests if files are taken from the folder relevance,
     then read in and putting the content into the file text_3434.csv. Note that
@@ -94,7 +110,10 @@ def test_generate_text_no_s3(
 
 
 def test_generate_text_successful(
-    prerequisites_generate_text, path_folder_temporary: Path, project_paths: ProjectPaths, s3_settings: S3Settings
+    prerequisites_generate_text,
+    path_folder_temporary: Path,
+    project_paths: ProjectPaths,
+    s3_settings: S3Settings,
 ):
     """Tests if the function returns true
     Requesting prerequisites_generate_text automatically (autouse)
@@ -105,7 +124,9 @@ def test_generate_text_successful(
     project_name = "test"
     s3_usage = False
 
-    return_value = generate_text_3434(project_name, s3_usage, s3_settings, project_paths=project_paths)
+    return_value = generate_text_3434(
+        project_name, s3_usage, s3_settings, project_paths=project_paths
+    )
     assert return_value is True
 
 
@@ -134,7 +155,9 @@ def test_generate_text_not_successful_empty_folder(
             file.unlink()
 
     # call the function
-    return_value = generate_text_3434(project_name, s3_usage, s3_settings, project_paths=project_paths)
+    return_value = generate_text_3434(
+        project_name, s3_usage, s3_settings, project_paths=project_paths
+    )
 
     output_cmd, _ = capsys.readouterr()
     assert "No relevance inference results found." in output_cmd
@@ -163,7 +186,9 @@ def test_generate_text_not_successful_exception(
             file.unlink()
 
     # patch glob.iglob to force an exception...
-    with patch("osc_extraction_utils.merger.glob.iglob", side_effect=lambda *args: [None]):
+    with patch(
+        "osc_extraction_utils.merger.glob.iglob", side_effect=lambda *args: [None]
+    ):
         return_value = generate_text_3434(
             project_name=project_name,
             s3_usage=s3_usage,
