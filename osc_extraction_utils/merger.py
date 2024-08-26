@@ -9,7 +9,12 @@ from osc_extraction_utils.settings import MainSettings, S3Settings
 
 class Merger:
     # TODO finish Merger class
-    def __init__(self, main_settings: MainSettings, s3_settings: S3Settings, project_paths: ProjectPaths) -> None:
+    def __init__(
+        self,
+        main_settings: MainSettings,
+        s3_settings: S3Settings,
+        project_paths: ProjectPaths,
+    ) -> None:
         self.main_settings: MainSettings = main_settings
         self.s3_settings: S3Settings = s3_settings
         self.project_paths: ProjectPaths = project_paths
@@ -33,7 +38,9 @@ class Merger:
         return S3Communication(
             s3_endpoint_url=os.getenv(self.s3_settings.interim_bucket.s3_endpoint),
             aws_access_key_id=os.getenv(self.s3_settings.interim_bucket.s3_access_key),
-            aws_secret_access_key=os.getenv(self.s3_settings.interim_bucket.s3_secret_key),
+            aws_secret_access_key=os.getenv(
+                self.s3_settings.interim_bucket.s3_secret_key
+            ),
             s3_bucket=os.getenv(self.s3_settings.interim_bucket.s3_bucket_name),
         )
 
@@ -47,7 +54,9 @@ class Merger:
             / "Text"
         )
         # TODO wrong type
-        self.s3_communication_main.download_files_in_prefix_to_dir(str(path_file_related_s3), str(self.project_paths.path_folder_relevance))  # type: ignore
+        self.s3_communication_main.download_files_in_prefix_to_dir(
+            str(path_file_related_s3), str(self.project_paths.path_folder_relevance)
+        )  # type: ignore
 
     def _upload_inference_related_files_to_s3(self) -> None:
         path_file_upload_to_s3: Path = (
@@ -59,12 +68,20 @@ class Merger:
             / "text_3434.csv"
         )
         # TODO wrong type
-        self.s3_communication_interim.upload_file_to_s3(filepath=str(path_file_upload_to_s3), s3_prefix=str(path_file_upload_to_s3.parent), s3_key=str(path_file_upload_to_s3.name))  # type: ignore
+        self.s3_communication_interim.upload_file_to_s3(
+            filepath=str(path_file_upload_to_s3),
+            s3_prefix=str(path_file_upload_to_s3.parent),
+            s3_key=str(path_file_upload_to_s3.name),
+        )  # type: ignore
 
     def _weird_writing_stuff(self) -> bool:
-        with open(str(self.project_paths.path_folder_text_3434) + r"/text_3434.csv", "w") as file_out:
+        with open(
+            str(self.project_paths.path_folder_text_3434) + r"/text_3434.csv", "w"
+        ) as file_out:
             very_first = True
-            rel_inf_list = list(glob.iglob(str(self.project_paths.path_folder_relevance) + r"/*.csv"))
+            rel_inf_list = list(
+                glob.iglob(str(self.project_paths.path_folder_relevance) + r"/*.csv")
+            )
         if len(rel_inf_list) == 0:
             print("No relevance inference results found.")
             return False
@@ -84,7 +101,12 @@ class Merger:
                 return False
 
 
-def generate_text_3434(project_name: str, s3_usage: bool, s3_settings: S3Settings, project_paths: ProjectPaths):
+def generate_text_3434(
+    project_name: str,
+    s3_usage: bool,
+    s3_settings: S3Settings,
+    project_paths: ProjectPaths,
+):
     """
     This function merges all infer relevance outputs into one large file, which is then
     used to train the kpi extraction model.
@@ -102,12 +124,25 @@ def generate_text_3434(project_name: str, s3_usage: bool, s3_settings: S3Setting
             s3_bucket=os.getenv(s3_settings.main_bucket.s3_bucket_name),
         )
         # Download infer relevance files
-        prefix_rel_infer = str(Path(s3_settings.prefix) / project_name / "data" / "output" / "RELEVANCE" / "Text")
-        s3c_main.download_files_in_prefix_to_dir(prefix_rel_infer, str(project_paths.path_folder_relevance))
+        prefix_rel_infer = str(
+            Path(s3_settings.prefix)
+            / project_name
+            / "data"
+            / "output"
+            / "RELEVANCE"
+            / "Text"
+        )
+        s3c_main.download_files_in_prefix_to_dir(
+            prefix_rel_infer, str(project_paths.path_folder_relevance)
+        )
 
-    with open(str(project_paths.path_folder_text_3434) + r"/text_3434.csv", "w") as file_out:
+    with open(
+        str(project_paths.path_folder_text_3434) + r"/text_3434.csv", "w"
+    ) as file_out:
         very_first = True
-        rel_inf_list = list(glob.iglob(str(project_paths.path_folder_relevance) + r"/*.csv"))
+        rel_inf_list = list(
+            glob.iglob(str(project_paths.path_folder_relevance) + r"/*.csv")
+        )
         if len(rel_inf_list) == 0:
             print("No relevance inference results found.")
             return False
@@ -132,7 +167,9 @@ def generate_text_3434(project_name: str, s3_usage: bool, s3_settings: S3Setting
             aws_secret_access_key=os.getenv(s3_settings.interim_bucket.s3_secret_key),
             s3_bucket=os.getenv(s3_settings.interim_bucket.s3_bucket_name),
         )
-        project_prefix_text3434 = str(Path(s3_settings.prefix) / project_name / "data" / "interim" / "ml")
+        project_prefix_text3434 = str(
+            Path(s3_settings.prefix) / project_name / "data" / "interim" / "ml"
+        )
         s3c_interim.upload_file_to_s3(
             filepath=str(project_paths.path_folder_text_3434) + r"/text_3434.csv",
             s3_prefix=project_prefix_text3434,

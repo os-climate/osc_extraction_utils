@@ -153,11 +153,15 @@ class TrainKpi(BaseSettings):
 
 
 class InferKpi(BaseSettings):
-    skip_processed_files: bool = False  # If set to True, will skip inferring on already processed files
+    skip_processed_files: bool = (
+        False  # If set to True, will skip inferring on already processed files
+    )
     top_k: int = 4
     batch_size: int = 16
     gpu: bool = True
-    num_processes: int | None = None  # Set to value 1 (or 0) to disable multiprocessing. Set to None to let Inferencer use all CPU cores minus one.
+    num_processes: int | None = (
+        None  # Set to value 1 (or 0) to disable multiprocessing. Set to None to let Inferencer use all CPU cores minus one.
+    )
     no_ans_boost: int = -15  # If incr
 
 

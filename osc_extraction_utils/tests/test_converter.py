@@ -42,7 +42,9 @@ def test_convert_single_file_to_csv(converter) -> None:
 
     mocked_read_excel.assert_called_once_with(Path("file.xlsx"), engine="openpyxl")
     path_destination_file: Path = path_destination_folder / "aggregated_annotation.csv"
-    mocked_read_excel.return_value.to_csv.assert_called_once_with(path_destination_file, index=False, header=True)
+    mocked_read_excel.return_value.to_csv.assert_called_once_with(
+        path_destination_file, index=False, header=True
+    )
 
 
 def test_find_xlsx_files_in_source_folder(converter) -> None:
@@ -50,7 +52,9 @@ def test_find_xlsx_files_in_source_folder(converter) -> None:
     mocked_path_glob.return_value = [Path("file1.xlsx"), Path("file2.xlsx")]
 
     with patch("osc_extraction_utils.core_utils.Path.glob", mocked_path_glob):
-        list_paths_xlsx_files: list[Path] = converter._find_xlsx_files_in_source_folder()
+        list_paths_xlsx_files: list[Path] = (
+            converter._find_xlsx_files_in_source_folder()
+        )
 
     mocked_path_glob.assert_called_once_with("*.xlsx")
     assert list_paths_xlsx_files == [Path("file1.xlsx"), Path("file2.xlsx")]

@@ -11,7 +11,9 @@ class Converter:
 
 
 class XlsToCsvConverter(Converter):
-    def __init__(self, path_folder_source: Path = Path(), path_folder_destination: Path = Path()):
+    def __init__(
+        self, path_folder_source: Path = Path(), path_folder_destination: Path = Path()
+    ):
         self.path_folder_source: Path = path_folder_source
         self.path_folder_destination: Path = path_folder_destination
 
@@ -44,7 +46,9 @@ class XlsToCsvConverter(Converter):
         self._convert_single_file_to_csv(list_paths_xlsx_files[0])
 
     def _find_xlsx_files_in_source_folder(self) -> list[Path]:
-        list_paths_xlsx_files: list[Path] = list(self._path_folder_source.glob("*.xlsx"))
+        list_paths_xlsx_files: list[Path] = list(
+            self._path_folder_source.glob("*.xlsx")
+        )
         return list_paths_xlsx_files
 
     def _check_for_valid_paths(self) -> None:
@@ -62,5 +66,7 @@ class XlsToCsvConverter(Converter):
     def _convert_single_file_to_csv(self, path_file: Path) -> None:
         print(f"Converting {path_file} to csv-format")
         df_read_excel: pd.DataFrame = pd.read_excel(path_file, engine="openpyxl")
-        path_csv_file: Path = self._path_folder_destination / "aggregated_annotation.csv"
+        path_csv_file: Path = (
+            self._path_folder_destination / "aggregated_annotation.csv"
+        )
         df_read_excel.to_csv(path_csv_file, index=False, header=True)
