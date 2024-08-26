@@ -26,12 +26,16 @@ def _delete_file(path_file: Path) -> None:
         print("Failed to delete %s. Reason: %s" % (str(path_file), exception))
 
 
-def copy_file_without_overwrite(path_folder_source_as_str: str, path_folder_destination_as_str: str) -> bool:
+def copy_file_without_overwrite(
+    path_folder_source_as_str: str, path_folder_destination_as_str: str
+) -> bool:
     path_folder_source = Path(path_folder_source_as_str)
     path_folder_destination = Path(path_folder_destination_as_str)
 
     for path_file_current_source in path_folder_source.iterdir():
-        path_file_current_destination = path_folder_destination / path_file_current_source.name
+        path_file_current_destination = (
+            path_folder_destination / path_file_current_source.name
+        )
         if not path_file_current_destination.exists():
             shutil.copyfile(path_file_current_source, path_file_current_destination)
     return True
@@ -62,14 +66,24 @@ def copy_file_without_overwrite(path_folder_source_as_str: str, path_folder_dest
 
 
 def download_data_from_s3_main_bucket_to_local_folder_if_required(
-    s3_bucket: S3Communication, path_s3_with_prefix_folder: Path, path_local_folder: Path, main_settings: MainSettings
+    s3_bucket: S3Communication,
+    path_s3_with_prefix_folder: Path,
+    path_local_folder: Path,
+    main_settings: MainSettings,
 ):
     if main_settings.general.s3_usage:
-        s3_bucket.download_files_in_prefix_to_dir(path_s3_with_prefix_folder, path_local_folder)
+        s3_bucket.download_files_in_prefix_to_dir(
+            path_s3_with_prefix_folder, path_local_folder
+        )
 
 
 def upload_data_from_local_folder_to_s3_interim_bucket_if_required(
-    s3_bucket: S3Communication, path_local_folder: Path, path_s3_with_prefix_folder: Path, main_settings: MainSettings
+    s3_bucket: S3Communication,
+    path_local_folder: Path,
+    path_s3_with_prefix_folder: Path,
+    main_settings: MainSettings,
 ):
     if main_settings.general.s3_usage:
-        s3_bucket.upload_files_in_dir_to_prefix(path_local_folder, path_s3_with_prefix_folder)
+        s3_bucket.upload_files_in_dir_to_prefix(
+            path_local_folder, path_s3_with_prefix_folder
+        )

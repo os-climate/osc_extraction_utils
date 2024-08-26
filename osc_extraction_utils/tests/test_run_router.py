@@ -12,7 +12,9 @@ from osc_extraction_utils.settings import MainSettings, S3Settings
 
 
 @pytest.fixture
-def router(main_settings: MainSettings, s3_settings: S3Settings, project_paths: ProjectPaths):
+def router(
+    main_settings: MainSettings, s3_settings: S3Settings, project_paths: ProjectPaths
+):
     dict_general_settings = {
         "project_name": "TEST",
         "ext_ip": "0.0.0.0",
@@ -22,7 +24,11 @@ def router(main_settings: MainSettings, s3_settings: S3Settings, project_paths: 
     }
 
     with patch.object(main_settings, "general", Mock(**dict_general_settings)):
-        router = Router(main_settings=main_settings, s3_settings=s3_settings, project_paths=project_paths)
+        router = Router(
+            main_settings=main_settings,
+            s3_settings=s3_settings,
+            project_paths=project_paths,
+        )
         router._set_extraction_server_string()
         router._set_inference_server_string()
         yield router
@@ -43,13 +49,19 @@ def server(prerequisites_generate_text) -> requests_mock.mocker.Mocker:
     server_address_extraction = f"http://{extraction_ip}:{extraction_port}"
     server_address_inference = f"http://{inference_ip}:{inference_port}"
 
-    with requests_mock.Mocker() as mocked_server, patch("osc_extraction_utils.router.json"):
+    with requests_mock.Mocker() as mocked_server, patch(
+        "osc_extraction_utils.router.json"
+    ):
         mocked_server.get(f"{server_address_extraction}/liveness", status_code=200)
         mocked_server.get(f"{server_address_extraction}/extract", status_code=200)
         mocked_server.get(f"{server_address_extraction}/curate", status_code=200)
         mocked_server.get(f"{server_address_inference}/liveness", status_code=200)
-        mocked_server.get(f"{server_address_inference}/train_relevance", status_code=200)
-        mocked_server.get(f"{server_address_inference}/infer_relevance", status_code=200)
+        mocked_server.get(
+            f"{server_address_inference}/train_relevance", status_code=200
+        )
+        mocked_server.get(
+            f"{server_address_inference}/infer_relevance", status_code=200
+        )
         mocked_server.get(f"{server_address_inference}/train_kpi", status_code=200)
         yield mocked_server
 
@@ -82,7 +94,9 @@ def test_run_router_extraction_liveness_up(
 
 
 def test_run_router_extraction_server_down(
-    router: Router, server: requests_mock.mocker.Mocker, capsys: typing.Generator[CaptureFixture[str], None, None]
+    router: Router,
+    server: requests_mock.mocker.Mocker,
+    capsys: typing.Generator[CaptureFixture[str], None, None],
 ):
     """Tests the return value if the extraction server is down
 
@@ -94,12 +108,16 @@ def test_run_router_extraction_server_down(
     server_address_node = f"http://{extraction_ip}:{extraction_port}/extract"
     server.get(server_address_node, status_code=-1)
 
-    router._send_payload_to_server_address_with_node(f"http://{extraction_ip}:{extraction_port}", "extract")
+    router._send_payload_to_server_address_with_node(
+        f"http://{extraction_ip}:{extraction_port}", "extract"
+    )
 
     assert router.return_value is False
 
 
-def test_run_router_extraction_curation_server_down(router: Router, server: requests_mock.mocker.Mocker):
+def test_run_router_extraction_curation_server_down(
+    router: Router, server: requests_mock.mocker.Mocker
+):
     """Tests the return value of the curation of the extraction server
 
     :param server: Requesting the server fixture
@@ -216,7 +234,9 @@ def test_run_router_kpi_training(
 ):
     inference_ip = "0.0.0.1"
     inference_port = 8000
-    server_address_node_infer_relevance = f"http://{inference_ip}:{inference_port}/infer_relevance"
+    server_address_node_infer_relevance = (
+        f"http://{inference_ip}:{inference_port}/infer_relevance"
+    )
     server_address_node_train_kpi = f"http://{inference_ip}:{inference_port}/train_kpi"
 
     # force an exception of generate_text_3434 by removing the folder_text_3434
@@ -232,10 +252,12 @@ def test_run_router_kpi_training(
     else:
         mocked_generate_text.side_effect = Exception()
 
-    with patch("osc_extraction_utils.router.generate_text_3434", mocked_generate_text), patch.object(
-        main_settings, "train_kpi", Mock(train=train_kpi)
-    ):
-        server.get(server_address_node_infer_relevance, status_code=status_code_infer_relevance)
+    with patch(
+        "osc_extraction_utils.router.generate_text_3434", mocked_generate_text
+    ), patch.object(main_settings, "train_kpi", Mock(train=train_kpi)):
+        server.get(
+            server_address_node_infer_relevance, status_code=status_code_infer_relevance
+        )
         server.get(server_address_node_train_kpi, status_code=status_code_train_kpi)
         router.run_router()
 
@@ -254,7 +276,10 @@ def test_run_router_kpi_training(
     ],
 )
 def test_run_router_successful_run(
-    router: Router, server: requests_mock.mocker.Mocker, infer_relevance: bool, train_kpi: bool
+    router: Router,
+    server: requests_mock.mocker.Mocker,
+    infer_relevance: bool,
+    train_kpi: bool,
 ):
     with patch("osc_extraction_utils.merger.generate_text_3434", Mock()):
         router.run_router()

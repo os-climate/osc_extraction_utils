@@ -14,7 +14,9 @@ from osc_extraction_utils.settings import MainSettings
 
 
 @pytest.mark.parametrize("s3_usage", [True, False])
-def test_download_data_from_s3_main_bucket_to_local_folder_if_required(s3_usage: bool, main_settings: MainSettings):
+def test_download_data_from_s3_main_bucket_to_local_folder_if_required(
+    s3_usage: bool, main_settings: MainSettings
+):
     mocked_s3_bucket = Mock(spec=S3Communication)
     mocked_path_local = Mock(spec=Path("path_local"))
     mocked_path_s3 = Mock(spec=Path("path_s3"))
@@ -25,13 +27,17 @@ def test_download_data_from_s3_main_bucket_to_local_folder_if_required(s3_usage:
         )
 
     if s3_usage:
-        mocked_s3_bucket.download_files_in_prefix_to_dir.assert_called_with(mocked_path_s3, mocked_path_local)
+        mocked_s3_bucket.download_files_in_prefix_to_dir.assert_called_with(
+            mocked_path_s3, mocked_path_local
+        )
     else:
         mocked_s3_bucket.assert_not_called()
 
 
 @pytest.mark.parametrize("s3_usage", [True, False])
-def test_upload_data_from_local_folder_to_s3_interim_bucket_if_required(s3_usage: bool, main_settings: MainSettings):
+def test_upload_data_from_local_folder_to_s3_interim_bucket_if_required(
+    s3_usage: bool, main_settings: MainSettings
+):
     mocked_s3_bucket = Mock(spec=S3Communication)
     mocked_path_local = Mock(spec=Path("path_local"))
     mocked_path_s3 = Mock(spec=Path("path_s3"))
@@ -42,6 +48,8 @@ def test_upload_data_from_local_folder_to_s3_interim_bucket_if_required(s3_usage
         )
 
     if s3_usage:
-        mocked_s3_bucket.upload_files_in_dir_to_prefix.assert_called_with(mocked_path_local, mocked_path_s3)
+        mocked_s3_bucket.upload_files_in_dir_to_prefix.assert_called_with(
+            mocked_path_local, mocked_path_s3
+        )
     else:
         mocked_s3_bucket.assert_not_called()

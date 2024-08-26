@@ -74,7 +74,9 @@ def create_multiple_xlsx_files(path_folder: Path) -> None:
         create_single_xlsx_file(path_folder, file_name=f"xlsx_file_{i}.xlsx")
 
 
-def modify_project_settings(project_settings: typing.Dict, *args: typing.Tuple[str, str, bool]) -> typing.Dict:
+def modify_project_settings(
+    project_settings: typing.Dict, *args: typing.Tuple[str, str, bool]
+) -> typing.Dict:
     """Returns are modified project settings dict based on the input args
 
     :param project_settings: Project settings
@@ -128,7 +130,9 @@ def s3_settings() -> S3Settings:
 # TODO add test mode paths?
 @pytest.fixture(scope="session")
 def project_paths(main_settings: MainSettings) -> ProjectPaths:
-    return ProjectPaths("test_project", main_settings, Path(__file__).parents[1].resolve())
+    return ProjectPaths(
+        "test_project", main_settings, Path(__file__).parents[1].resolve()
+    )
 
 
 @pytest.fixture(scope="session")
@@ -155,8 +159,12 @@ def prerequisites_generate_text(
         write_to_file(path_current_file, f"That is a test {i}", "HEADER")
 
     with (
-        patch.object(project_paths, "path_folder_relevance", Path(path_folder_relevance)),
-        patch.object(project_paths, "path_folder_text_3434", Path(path_folder_text_3434)),
+        patch.object(
+            project_paths, "path_folder_relevance", Path(path_folder_relevance)
+        ),
+        patch.object(
+            project_paths, "path_folder_text_3434", Path(path_folder_text_3434)
+        ),
         patch("osc_extraction_utils.merger.os.getenv", lambda *args: args[0]),
     ):
         yield

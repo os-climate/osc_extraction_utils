@@ -32,26 +32,44 @@ class ProjectPaths(BaseSettings):
     path_folder_source_annotation: Path = Field(default=Path("input/annotations"))
     path_folder_source_mapping: Path = Field(default=Path("input/kpi_mapping"))
     path_folder_destination_pdf: Path = Field(default=Path("interim/pdfs"))
-    path_folder_destination_annotation: Path = Field(default=Path("interim/ml/annotations"))
+    path_folder_destination_annotation: Path = Field(
+        default=Path("interim/ml/annotations")
+    )
     path_folder_destination_mapping: Path = Field(default=Path("interim/kpi_mapping"))
-    path_folder_destination_extraction: Path = Field(default=Path("interim/ml/extraction"))
+    path_folder_destination_extraction: Path = Field(
+        default=Path("interim/ml/extraction")
+    )
     path_folder_destination_curation: Path = Field(default=Path("interim/ml/curation"))
     path_folder_destination_training: Path = Field(default=Path("interim/ml/training"))
 
-    path_folder_destination_saved_models_relevance: Path = Field(default=Path("RELEVANCE/Text"))
-    path_folder_destination_saved_models_inference: Path = Field(default=Path("KPI_EXTRACTION/Text"))
+    path_folder_destination_saved_models_relevance: Path = Field(
+        default=Path("RELEVANCE/Text")
+    )
+    path_folder_destination_saved_models_inference: Path = Field(
+        default=Path("KPI_EXTRACTION/Text")
+    )
 
     path_folder_text_3434: Path = Field(default=Path("interim/ml"))
     path_folder_relevance: Path = Field(default=Path("output/RELEVANCE/Text"))
 
-    def __init__(self, string_project_name: str, main_settings: MainSettings, path_folder_root: Path, **kwargs):
+    def __init__(
+        self,
+        string_project_name: str,
+        main_settings: MainSettings,
+        path_folder_root: Path,
+        **kwargs,
+    ):
         super().__init__(**kwargs)
         if not isinstance(string_project_name, str):
             raise TypeError
         self._string_project_name: str = string_project_name
         self._PATH_FOLDER_ROOT = path_folder_root.resolve()
-        self._path_project_data_folder: Path = self._PATH_FOLDER_DATA / Path(string_project_name)
-        self._path_project_model_folder: Path = self._PATH_FOLDER_MODEL / Path(string_project_name)
+        self._path_project_data_folder: Path = self._PATH_FOLDER_DATA / Path(
+            string_project_name
+        )
+        self._path_project_model_folder: Path = self._PATH_FOLDER_MODEL / Path(
+            string_project_name
+        )
         self._main_settings: MainSettings = main_settings
         self._update_all_paths_depending_on_path_project_data_folder()
         self._update_all_paths_depending_on_path_project_model_folder()
@@ -118,13 +136,19 @@ class ProjectPaths(BaseSettings):
 
     def _update_all_paths_depending_on_path_project_data_folder(self) -> None:
         list_paths_model_fields_filtered: list[str] = [
-            path_model_field for path_model_field in self.model_fields.keys() if "saved_models" not in path_model_field
+            path_model_field
+            for path_model_field in self.model_fields.keys()
+            if "saved_models" not in path_model_field
         ]
 
         for path_field in list_paths_model_fields_filtered:
             path_field_default: Path = self.model_fields[path_field].default
             setattr(
-                self, f"{path_field}", self._PATH_FOLDER_DATA / Path(self._string_project_name) / path_field_default
+                self,
+                f"{path_field}",
+                self._PATH_FOLDER_DATA
+                / Path(self._string_project_name)
+                / path_field_default,
             )
 
     def _update_all_root_related_paths(self) -> None:
@@ -133,7 +157,9 @@ class ProjectPaths(BaseSettings):
         self._PATH_FOLDER_DATA: Path = self.PATH_FOLDER_ROOT / "data"
 
     def _create_all_root_related_folders(self) -> None:
-        self._PATH_FOLDER_MODEL.mkdir(parents=True, exist_ok=True)  # includes root folder
+        self._PATH_FOLDER_MODEL.mkdir(
+            parents=True, exist_ok=True
+        )  # includes root folder
         self._PATH_FOLDER_DATA.mkdir(exist_ok=True)
 
     def _update_all_paths_depending_on_path_project_model_folder(self) -> None:
@@ -147,7 +173,8 @@ class ProjectPaths(BaseSettings):
         ]
 
         for string_model_field, path_main_settings in zip(
-            list_string_paths_depending_on_path_project_model_folder, list_paths_main_settings
+            list_string_paths_depending_on_path_project_model_folder,
+            list_paths_main_settings,
         ):
             setattr(
                 self,

@@ -14,7 +14,9 @@ from osc_extraction_utils.core_utils import (
 
 
 @pytest.fixture()
-def prerequisites_copy_file_without_overwrite(path_folder_temporary: Path) -> Generator[None, None, None]:
+def prerequisites_copy_file_without_overwrite(
+    path_folder_temporary: Path,
+) -> Generator[None, None, None]:
     """Defines a fixture for creating the source and destination folder
 
     :param path_folder_temporary: Requesting the path_folder_temporary fixture
@@ -61,7 +63,9 @@ def test_create_folder_cleanup(path_folder_temporary: Path):
 def test_create_folder_already_exists():
     with (
         patch.object(Path, "mkdir") as mocked_path,
-        patch("osc_extraction_utils.core_utils._delete_files_in_folder") as mocked_mkdir,
+        patch(
+            "osc_extraction_utils.core_utils._delete_files_in_folder"
+        ) as mocked_mkdir,
     ):
         mocked_path.side_effect = OSError
 
@@ -72,7 +76,9 @@ def test_create_folder_already_exists():
 def test_create_folder_path_not_exists():
     with (
         patch.object(Path, "mkdir") as mocked_path,
-        patch("osc_extraction_utils.core_utils._delete_files_in_folder") as mocked_mkdir,
+        patch(
+            "osc_extraction_utils.core_utils._delete_files_in_folder"
+        ) as mocked_mkdir,
     ):
         mocked_path.side_effect = FileNotFoundError
 
@@ -80,7 +86,9 @@ def test_create_folder_path_not_exists():
         mocked_mkdir.assert_called_once()
 
 
-def test_copy_file_without_overwrite_result(prerequisites_copy_file_without_overwrite, path_folder_temporary: Path):
+def test_copy_file_without_overwrite_result(
+    prerequisites_copy_file_without_overwrite, path_folder_temporary: Path
+):
     """Tests if copy_file_without_overwrite returns True if executed
     Requesting prerequisites_copy_file_without_overwrite automatically (autouse)
 
@@ -92,7 +100,9 @@ def test_copy_file_without_overwrite_result(prerequisites_copy_file_without_over
     path_folder_source_file = path_folder_source / "test.txt"
     path_folder_source_file.touch()
 
-    result = copy_file_without_overwrite(str(path_folder_source), str(path_folder_destination))
+    result = copy_file_without_overwrite(
+        str(path_folder_source), str(path_folder_destination)
+    )
     assert result is True
 
 

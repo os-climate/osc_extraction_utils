@@ -43,7 +43,9 @@ def test_python_executable_set(paths_project: ProjectPaths):
     assert paths_project.PYTHON_EXECUTABLE == "python"
 
 
-def test_check_that_all_required_paths_exist_in_project_path_object(main_settings: MainSettings):
+def test_check_that_all_required_paths_exist_in_project_path_object(
+    main_settings: MainSettings,
+):
     list_paths_expected = [
         "input/pdfs/training",
         "input/annotations",
@@ -60,7 +62,9 @@ def test_check_that_all_required_paths_exist_in_project_path_object(main_setting
         "output/RELEVANCE/Text",
     ]
 
-    with patch.object(ProjectPaths, "_update_all_paths_depending_on_path_project_data_folder"), patch.object(
+    with patch.object(
+        ProjectPaths, "_update_all_paths_depending_on_path_project_data_folder"
+    ), patch.object(
         ProjectPaths, "_update_all_paths_depending_on_path_project_model_folder"
     ):
         paths_project: ProjectPaths = ProjectPaths(
@@ -74,10 +78,16 @@ def test_check_that_all_required_paths_exist_in_project_path_object(main_setting
 
 def test_project_paths_update_methods_are_called(main_settings: MainSettings):
     with (
-        patch.object(ProjectPaths, "_update_all_paths_depending_on_path_project_data_folder") as mocked_update_data,
-        patch.object(ProjectPaths, "_update_all_paths_depending_on_path_project_model_folder") as mocked_update_model,
+        patch.object(
+            ProjectPaths, "_update_all_paths_depending_on_path_project_data_folder"
+        ) as mocked_update_data,
+        patch.object(
+            ProjectPaths, "_update_all_paths_depending_on_path_project_model_folder"
+        ) as mocked_update_model,
     ):
-        ProjectPaths("new_test_project", main_settings, Path(__file__).parents[1].resolve())
+        ProjectPaths(
+            "new_test_project", main_settings, Path(__file__).parents[1].resolve()
+        )
 
     mocked_update_data.assert_called_once()
     mocked_update_model.assert_called_once()
@@ -95,12 +105,18 @@ def test_set_path_project_model_folder(paths_project: ProjectPaths):
     assert paths_project.path_project_model_folder.parts[-1] == string_test_project
 
 
-def test_setting_new_project_name_results_in_call_of_update_methods(paths_project: ProjectPaths):
+def test_setting_new_project_name_results_in_call_of_update_methods(
+    paths_project: ProjectPaths,
+):
     string_test_project: str = "test_project"
 
     with (
-        patch.object(paths_project, "_update_all_paths_depending_on_path_project_data_folder") as mocked_update_data,
-        patch.object(paths_project, "_update_all_paths_depending_on_path_project_model_folder") as mocked_update_model,
+        patch.object(
+            paths_project, "_update_all_paths_depending_on_path_project_data_folder"
+        ) as mocked_update_data,
+        patch.object(
+            paths_project, "_update_all_paths_depending_on_path_project_model_folder"
+        ) as mocked_update_model,
     ):
         paths_project.string_project_name = string_test_project
 
@@ -116,11 +132,15 @@ def test_set_main_settings(paths_project: ProjectPaths, main_settings: Settings)
     assert paths_project.main_settings != main_settings
 
 
-def test_update_all_root_related_paths(main_settings: MainSettings, path_folder_temporary: Path):
+def test_update_all_root_related_paths(
+    main_settings: MainSettings, path_folder_temporary: Path
+):
     string_test_project: str = "test_project"
     path_folder_project_root = path_folder_temporary / "test_project"
 
-    project_paths = ProjectPaths(string_test_project, main_settings, path_folder_project_root)
+    project_paths = ProjectPaths(
+        string_test_project, main_settings, path_folder_project_root
+    )
 
     assert project_paths._PATH_FOLDER_ROOT == path_folder_project_root
     assert project_paths._PATH_FOLDER_NLP == path_folder_project_root
@@ -128,7 +148,9 @@ def test_update_all_root_related_paths(main_settings: MainSettings, path_folder_
     assert project_paths._PATH_FOLDER_DATA == path_folder_project_root / "data"
 
 
-def test_create_all_root_related_paths(main_settings: MainSettings, path_folder_temporary: Path):
+def test_create_all_root_related_paths(
+    main_settings: MainSettings, path_folder_temporary: Path
+):
     string_test_project: str = "test_project"
     path_folder_project_root = path_folder_temporary / "test_project"
     list_paths_expected = [
@@ -143,7 +165,9 @@ def test_create_all_root_related_paths(main_settings: MainSettings, path_folder_
         assert path.exists()
 
 
-def test_update_all_paths_depending_on_path_project_data_folder(paths_project: ProjectPaths):
+def test_update_all_paths_depending_on_path_project_data_folder(
+    paths_project: ProjectPaths,
+):
     string_test_project: str = "test_project"
     paths_project.string_project_name = string_test_project
 
@@ -160,7 +184,9 @@ def test_update_all_paths_depending_on_path_project_data_folder(paths_project: P
         assert string_test_project in path_current_field.parts
 
 
-def test_update_all_paths_depending_on_path_project_model_folder(paths_project: ProjectPaths):
+def test_update_all_paths_depending_on_path_project_model_folder(
+    paths_project: ProjectPaths,
+):
     main_settings_changed: MainSettings = MainSettings()
     main_settings_changed.general.project_name = "TEST_NEW"
     paths_project._main_settings = main_settings_changed
@@ -170,13 +196,17 @@ def test_update_all_paths_depending_on_path_project_model_folder(paths_project: 
     paths_project._update_all_paths_depending_on_path_project_model_folder()
 
     list_paths_model_fields_filtered: list[str] = [
-        path_model_field for path_model_field in paths_project.model_fields.keys() if "saved_models" in path_model_field
+        path_model_field
+        for path_model_field in paths_project.model_fields.keys()
+        if "saved_models" in path_model_field
     ]
     list_paths_main_settings: list[Path] = [
         Path(paths_project.main_settings.train_relevance.output_model_name),
         Path(paths_project.main_settings.train_kpi.output_model_name),
     ]
-    for path_model_field, path_main_settings in zip(list_paths_model_fields_filtered, list_paths_main_settings):
+    for path_model_field, path_main_settings in zip(
+        list_paths_model_fields_filtered, list_paths_main_settings
+    ):
         path_model_current_field: Path = getattr(paths_project, f"{path_model_field}")
         assert string_test_project in path_model_current_field.parts
         assert path_model_current_field.parts[-1] == path_main_settings.name
